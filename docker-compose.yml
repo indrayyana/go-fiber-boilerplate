@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - go-network
+
+  postgresdb:
+    image: postgres:alpine
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      timeout: 20s
+      retries: 10
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./src/database/init:/docker-entrypoint-initdb.d
+    networks:
+      - go-network
+  
+  go-app:
+    build: .
+    image: go-app
+    ports:
+      - ${APP_PORT}:3000
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/go-app
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - go-network
+
+volumes:  
+  dbdata: 
+
+networks:
+  go-network:
+    driver: bridge
