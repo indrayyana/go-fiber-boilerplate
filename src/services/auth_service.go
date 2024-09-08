@@ -59,7 +59,7 @@ func (s *authService) Register(c *fiber.Ctx, req *validation.Register) (*model.U
 
 	result := s.DB.WithContext(c.Context()).Create(user)
 	if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
-		return nil, fiber.NewError(fiber.StatusConflict, "Email is already in use")
+		return nil, fiber.NewError(fiber.StatusConflict, "Email already taken")
 	}
 
 	if result.Error != nil {
@@ -76,11 +76,11 @@ func (s *authService) Login(c *fiber.Ctx, req *validation.Login) (*model.User, e
 
 	user, err := s.UserService.GetUserByEmail(c, req.Email)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Incorrect email or password")
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid email or password")
 	}
 
 	if !utils.CheckPasswordHash(req.Password, user.Password) {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Incorrect email or password")
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid email or password")
 	}
 
 	return user, nil
@@ -108,12 +108,12 @@ func (s *authService) RefreshToken(c *fiber.Ctx, req *validation.RefreshToken) (
 
 	token, err := s.TokenService.GetTokenByUserID(c, req.Token)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusNotFound, "Token not found")
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 	}
 
 	user, err := s.UserService.GetUserByID(c, token.UserID.String())
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusNotFound, "Token not found")
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 	}
 
 	newTokens, err := s.TokenService.GenerateAuthTokens(c, user)

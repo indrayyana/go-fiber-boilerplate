@@ -31,6 +31,14 @@ func NewAuthController(
 	}
 }
 
+// @Tags         Auth
+// @Summary      Register as user
+// @Accept       json
+// @Produce      json
+// @Param        request  body  validation.Register  true  "Request body"
+// @Router       /auth/register [post]
+// @Success      201  {object}  example.RegisterResponse
+// @Failure      409  {object}  example.DuplicateEmail  "Email already taken"
 func (a *AuthController) Register(c *fiber.Ctx) error {
 	req := new(validation.Register)
 
@@ -58,6 +66,14 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Login
+// @Accept       json
+// @Produce      json
+// @Param        request  body  validation.Login  true  "Request body"
+// @Router       /auth/login [post]
+// @Success      200  {object}  example.LoginResponse
+// @Failure      401  {object}  example.FailedLogin  "Invalid email or password"
 func (a *AuthController) Login(c *fiber.Ctx) error {
 	req := new(validation.Login)
 
@@ -85,6 +101,14 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Logout
+// @Accept       json
+// @Produce      json
+// @Param        request  body  example.RefreshToken  true  "Request body"
+// @Router       /auth/logout [post]
+// @Success      200  {object}  example.LogoutResponse
+// @Failure      404  {object}  example.NotFound  "Not found"
 func (a *AuthController) Logout(c *fiber.Ctx) error {
 	req := new(validation.RefreshToken)
 
@@ -104,6 +128,14 @@ func (a *AuthController) Logout(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Refresh auth tokens
+// @Accept       json
+// @Produce      json
+// @Param        request  body  example.RefreshToken  true  "Request body"
+// @Router       /auth/refresh-tokens [post]
+// @Success      200  {object}  example.RefreshTokenResponse
+// @Failure      401  {object}  example.Unauthorized  "Unauthorized"
 func (a *AuthController) RefreshToken(c *fiber.Ctx) error {
 	req := new(validation.RefreshToken)
 
@@ -124,6 +156,11 @@ func (a *AuthController) RefreshToken(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Login with google
+// @Description  This route initiates the Google OAuth2 login flow. Please try this in your browser.
+// @Router       /auth/google [get]
+// @Success      200  {object}  example.GoogleLoginResponse
 func (a *AuthController) GoogleLogin(c *fiber.Ctx) error {
 	// Generate a random state
 	state := uuid.New().String()

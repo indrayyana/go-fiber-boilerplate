@@ -99,14 +99,14 @@ func (s *tokenService) GetTokenByUserID(c *fiber.Ctx, tokenStr string) (*model.T
 }
 
 func (s *tokenService) GenerateAuthTokens(c *fiber.Ctx, user *model.User) (*res.Tokens, error) {
-	accessTokenExpires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
+	accessTokenExpires := time.Now().UTC().Add(time.Minute * time.Duration(config.JWTAccessExp))
 	accessToken, err := s.GenerateToken(user.ID.String(), accessTokenExpires, "access")
 	if err != nil {
 		s.Log.Errorf("Failed generate token: %+v", err)
 		return nil, err
 	}
 
-	refreshTokenExpires := time.Now().Add(time.Hour * 24 * time.Duration(config.JWTRefreshExp))
+	refreshTokenExpires := time.Now().UTC().Add(time.Hour * 24 * time.Duration(config.JWTRefreshExp))
 	refreshToken, err := s.GenerateToken(user.ID.String(), refreshTokenExpires, "refresh")
 	if err != nil {
 		s.Log.Errorf("Failed generate token: %+v", err)

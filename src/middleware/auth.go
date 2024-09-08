@@ -15,17 +15,17 @@ func Auth(userService services.UserService, requiredRights ...string) fiber.Hand
 		token := strings.TrimSpace(strings.Replace(authHeader, "Bearer", "", 1))
 
 		if token == "" {
-			return fiber.NewError(fiber.StatusUnauthorized, "Please login first")
+			return fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 		}
 
 		userID, err := utils.VerifyToken(token, config.JWTSecret, config.TokenTypeAccess)
 		if err != nil {
-			return fiber.NewError(fiber.StatusUnauthorized, "Invalid token")
+			return fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 		}
 
 		user, err := userService.GetUserByID(c, userID)
 		if err != nil || user == nil {
-			return fiber.NewError(fiber.StatusUnauthorized, "Please login (invalid token)")
+			return fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 		}
 
 		c.Locals("userID", userID)

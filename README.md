@@ -1,12 +1,13 @@
 # RESTful API Go Fiber Boilerplate
 
+![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![License](https://img.shields.io/dub/l/vibe-d.svg)
 
 A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
 `Inspired by the Express boilerplate.`
 
-The app comes with many built-in features, such as authentication using JWT, request validation, integration tests, docker support, pagination, etc. For more details, check the features list below.
+The app comes with many built-in features, such as authentication using JWT and Google OAuth2, request validation, integration tests, docker support, API documentation, pagination, etc. For more details, check the features list below.
 
 ## Quick Start
 
@@ -48,6 +49,7 @@ cp .env.example .env
 - [Commands](#commands)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
+- [API Documentation](#api-documentation)
 - [Error Handling](#error-handling)
 - [Validation](#validation)
 - [Authentication](#authentication)
@@ -63,6 +65,7 @@ cp .env.example .env
 - **Logging**: using [Logrus](https://github.com/sirupsen/logrus) and [Fiber-Logger](https://docs.gofiber.io/api/middleware/logger)
 - **Testing**: integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
 - **Error handling**: centralized error handling mechanism
+- **API documentation**: with [Swag](https://github.com/swaggo/swag) and [Swagger](https://github.com/gofiber/swagger)
 - **Environment variables**: using [Viper](https://github.com/spf13/viper)
 - **Security**: set security HTTP headers using [Fiber-Helmet](https://docs.gofiber.io/api/middleware/helmet)
 - **CORS**: Cross-Origin Resource-Sharing enabled using [Fiber-CORS](https://docs.gofiber.io/api/middleware/cors)
@@ -108,6 +111,13 @@ Linting:
 make lint
 ```
 
+Swagger:
+
+```bash
+# generate the swagger documentation
+make swagger
+```
+
 ## Environment Variables
 
 The environment variables can be found and modified in the `.env` file. They come with these default values:
@@ -115,7 +125,7 @@ The environment variables can be found and modified in the `.env` file. They com
 ```bash
 # server configuration
 # Env value : prod || dev
-APP_ENV=prod
+APP_ENV=dev
 APP_HOST=0.0.0.0
 APP_PORT=3000
 
@@ -147,6 +157,7 @@ src\
  |--config\         # Environment variables and configuration related things
  |--controllers\    # Route controllers (controller layer)
  |--database\       # Database connection & migration
+ |--docs\           # Swagger files
  |--middleware\     # Custom fiber middlewares
  |--model\          # Postgres models (data layer)
  |--response\       # Response models
@@ -156,6 +167,12 @@ src\
  |--validation\     # Request data validation schemas
  |--main.go         # Fiber app
 ```
+
+## API Documentation
+
+To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser. This documentation page is automatically generated using the [Swag](https://github.com/swaggo/swag) definitions written as comments in the controller files.
+
+See 👉 [Declarative Comments Format.](https://github.com/swaggo/swag#declarative-comments-format)
 
 ## API Endpoints
 

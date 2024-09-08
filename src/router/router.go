@@ -1,6 +1,7 @@
 package router
 
 import (
+	"app/src/config"
 	"app/src/services"
 	"app/src/validation"
 
@@ -20,4 +21,8 @@ func Routes(app *fiber.App, db *gorm.DB) {
 	AuthRoutes(v1, authService, userService, tokenService)
 	UserRoutes(v1, userService, tokenService)
 	// add another routes here...
+
+	if !config.IsProd {
+		DocsRoutes(v1)
+	}
 }
