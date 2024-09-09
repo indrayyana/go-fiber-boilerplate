@@ -91,7 +91,7 @@ func (s *authService) Logout(c *fiber.Ctx, req *validation.RefreshToken) error {
 		return err
 	}
 
-	token, err := s.TokenService.GetTokenByUserID(c, req.Token)
+	token, err := s.TokenService.GetTokenByUserID(c, req.RefreshToken)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Token not found")
 	}
@@ -106,7 +106,7 @@ func (s *authService) RefreshToken(c *fiber.Ctx, req *validation.RefreshToken) (
 		return nil, err
 	}
 
-	token, err := s.TokenService.GetTokenByUserID(c, req.Token)
+	token, err := s.TokenService.GetTokenByUserID(c, req.RefreshToken)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 	}

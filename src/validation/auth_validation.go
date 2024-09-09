@@ -18,5 +18,5 @@ type GoogleLogin struct {
 }
 
 type RefreshToken struct {
-	Token string `json:"token" validate:"required,max=255"`
+	RefreshToken string `json:"refresh_token" validate:"required,max=255"`
 }

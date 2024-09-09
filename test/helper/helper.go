@@ -93,11 +93,10 @@ func DeleteToken(db *gorm.DB, userID string) error {
 }
 
 func GenerateToken(
-	userID, userRole string, expires time.Time, tokenType string,
+	userID string, expires time.Time, tokenType string,
 ) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":  userID,
-		"role": userRole,
 		"iat":  time.Now().Unix(),
 		"exp":  expires.Unix(),
 		"type": tokenType,
@@ -108,11 +107,10 @@ func GenerateToken(
 }
 
 func GenerateInvalidToken(
-	userID, userRole string, expires time.Time, tokenType string,
+	userID string, expires time.Time, tokenType string,
 ) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":  userID,
-		"role": userRole,
 		"iat":  time.Now().Unix(),
 		"exp":  expires.Unix(),
 		"type": tokenType,

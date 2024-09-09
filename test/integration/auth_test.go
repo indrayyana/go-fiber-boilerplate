@@ -219,7 +219,7 @@ func TestAuthRoutes(t *testing.T) {
 
 			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
 			assert.Equal(t, "error", responseBody["status"])
-			assert.Equal(t, "Incorrect email or password", responseBody["message"])
+			assert.Equal(t, "Invalid email or password", responseBody["message"])
 		})
 
 		t.Run("should return 401 error if password is wrong", func(t *testing.T) {
@@ -249,7 +249,7 @@ func TestAuthRoutes(t *testing.T) {
 
 			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
 			assert.Equal(t, "error", responseBody["status"])
-			assert.Equal(t, "Incorrect email or password", responseBody["message"])
+			assert.Equal(t, "Invalid email or password", responseBody["message"])
 		})
 	})
 	t.Run("POST /v1/auth/logout", func(t *testing.T) {
@@ -257,23 +257,22 @@ func TestAuthRoutes(t *testing.T) {
 			helper.ClearAll(test.DB)
 			helper.InsertUser(test.DB, fixture.UserOne)
 
-			expires := time.Now().Add(time.Hour * 24 * time.Duration(config.JWTRefreshExp))
-			refreshToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeRefresh)
+			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
 			assert.Nil(t, err)
 
-			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), expires)
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
 			assert.Nil(t, err)
 
-			bodyJSON, err := json.Marshal(validation.RefreshToken{Token: refreshToken})
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
 			assert.Nil(t, err)
 
 			request := httptest.NewRequest(http.MethodPost, "/v1/auth/logout", strings.NewReader(string(bodyJSON)))
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 
-			apiresponse, err := test.App.Test(request)
+			apiResponse, err := test.App.Test(request)
 			assert.Nil(t, err)
-			assert.Equal(t, http.StatusOK, apiresponse.StatusCode)
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 
 			dbRefreshTokenDoc, _ := helper.GetTokenByUserID(test.DB, refreshToken)
 			assert.Nil(t, dbRefreshTokenDoc)
@@ -286,20 +285,19 @@ func TestAuthRoutes(t *testing.T) {
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 
-			apiresponse, err := test.App.Test(request)
+			apiResponse, err := test.App.Test(request)
 			assert.Nil(t, err)
-			assert.Equal(t, http.StatusBadRequest, apiresponse.StatusCode)
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
 		})
 
 		t.Run("should return 404 error if refresh token is not found in the database", func(t *testing.T) {
 			helper.ClearAll(test.DB)
 			helper.InsertUser(test.DB, fixture.UserOne)
 
-			expires := time.Now().Add(time.Hour * 24 * time.Duration(config.JWTRefreshExp))
-			refreshToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeRefresh)
+			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
 			assert.Nil(t, err)
 
-			bodyJSON, err := json.Marshal(validation.RefreshToken{Token: refreshToken})
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
 			assert.Nil(t, err)
 			request := httptest.NewRequest(http.MethodPost, "/v1/auth/logout", strings.NewReader(string(bodyJSON)))
 			request.Header.Set("Content-Type", "application/json")
@@ -310,6 +308,126 @@ func TestAuthRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusNotFound, apiresponse.StatusCode)
 		})
 	})
+	t.Run("POST /v1/auth/refresh-tokens", func(t *testing.T) {
+		t.Run("should return 200 and new auth tokens if refresh token is valid", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			assert.Nil(t, err)
+
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/refresh-tokens", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			bytes, err := io.ReadAll(apiResponse.Body)
+			assert.Nil(t, err)
+
+			responseBody := new(response.RefreshToken)
+
+			err = json.Unmarshal(bytes, responseBody)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+			assert.NotNil(t, responseBody.Tokens.Access.Token)
+			assert.NotNil(t, responseBody.Tokens.Refresh.Token)
+
+			dbRefreshTokenDoc, err := helper.GetTokenByUserID(test.DB, responseBody.Tokens.Refresh.Token)
+			assert.Nil(t, err)
+
+			assert.Equal(t, dbRefreshTokenDoc.UserID, fixture.UserOne.ID)
+			assert.Equal(t, dbRefreshTokenDoc.Type, config.TokenTypeRefresh)
+		})
+
+		t.Run("should return 400 error if refresh token is missing from request body", func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/refresh-tokens", nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 401 error if refresh token is signed using an invalid secret", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			refreshToken, err := helper.GenerateInvalidToken(fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken, config.TokenTypeRefresh)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			assert.Nil(t, err)
+
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/refresh-tokens", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 401 error if refresh token is not found in the database", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
+			assert.Nil(t, err)
+
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/refresh-tokens", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 401 error if refresh token is expired", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			expires := time.Now().Add(time.Second * 1)
+			refreshToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), expires, config.TokenTypeRefresh)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			assert.Nil(t, err)
+
+			time.Sleep(2 * time.Second)
+
+			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/refresh-tokens", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+	})
 }
 
 func TestAuthMiddleware(t *testing.T) {
@@ -317,8 +435,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		token, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		token, err := fixture.AccessToken(fixture.UserOne)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users", nil)
@@ -352,8 +469,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		refreshToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeRefresh)
+		refreshToken, err := fixture.RefreshToken(fixture.UserOne)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users", nil)
@@ -369,8 +485,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		accessToken, err := helper.GenerateInvalidToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		accessToken, err := helper.GenerateInvalidToken(fixture.UserOne.ID.String(), fixture.ExpiresAccessToken, config.TokenTypeAccess)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users", nil)
@@ -387,7 +502,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.InsertUser(test.DB, fixture.UserOne)
 
 		expires := time.Now().Add(time.Second * 1)
-		accessToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		accessToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), expires, config.TokenTypeAccess)
 		assert.Nil(t, err)
 
 		time.Sleep(2 * time.Second)
@@ -404,8 +519,7 @@ func TestAuthMiddleware(t *testing.T) {
 	t.Run("should call next with unauthorized error if user is not found", func(t *testing.T) {
 		helper.ClearAll(test.DB)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		accessToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		accessToken, err := fixture.AccessToken(fixture.UserOne)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users", nil)
@@ -421,8 +535,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		accessToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		accessToken, err := fixture.AccessToken(fixture.UserOne)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users", nil)
@@ -438,8 +551,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		accessToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), fixture.UserOne.Role, expires, config.TokenTypeAccess)
+		accessToken, err := fixture.AccessToken(fixture.UserOne)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users/"+fixture.UserOne.ID.String(), nil)
@@ -455,8 +567,7 @@ func TestAuthMiddleware(t *testing.T) {
 		helper.ClearAll(test.DB)
 		helper.InsertUser(test.DB, fixture.UserOne, fixture.Admin)
 
-		expires := time.Now().Add(time.Minute * time.Duration(config.JWTAccessExp))
-		accessToken, err := helper.GenerateToken(fixture.Admin.ID.String(), fixture.Admin.Role, expires, config.TokenTypeAccess)
+		accessToken, err := fixture.AccessToken(fixture.Admin)
 		assert.Nil(t, err)
 
 		request := httptest.NewRequest(http.MethodGet, "/v1/users/"+fixture.UserOne.ID.String(), nil)

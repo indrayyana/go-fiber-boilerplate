@@ -16,7 +16,7 @@ import (
 
 type TokenService interface {
 	GenerateToken(userID string, expires time.Time, tokenType string) (string, error)
-	SaveToken(c *fiber.Ctx, token string, userID string, expires time.Time) error
+	SaveToken(c *fiber.Ctx, token, userID, tokenType string, expires time.Time) error
 	DeleteToken(c *fiber.Ctx, userID string) error
 	GetTokenByUserID(c *fiber.Ctx, tokenStr string) (*model.Token, error)
 	GenerateAuthTokens(c *fiber.Ctx, user *model.User) (*res.Tokens, error)
@@ -46,7 +46,7 @@ func (s *tokenService) GenerateToken(userID string, expires time.Time, tokenType
 	return token.SignedString([]byte(config.JWTSecret))
 }
 
-func (s *tokenService) SaveToken(c *fiber.Ctx, token string, userID string, expires time.Time) error {
+func (s *tokenService) SaveToken(c *fiber.Ctx, token, userID, tokenType string, expires time.Time) error {
 	if err := s.DeleteToken(c, userID); err != nil {
 		return err
 	}
@@ -54,6 +54,7 @@ func (s *tokenService) SaveToken(c *fiber.Ctx, token string, userID string, expi
 	tokenDoc := &model.Token{
 		Token:   token,
 		UserID:  uuid.MustParse(userID),
+		Type:    tokenType,
 		Expires: expires,
 	}
 
@@ -113,7 +114,7 @@ func (s *tokenService) GenerateAuthTokens(c *fiber.Ctx, user *model.User) (*res.
 		return nil, err
 	}
 
-	err = s.SaveToken(c, refreshToken, user.ID.String(), refreshTokenExpires)
+	err = s.SaveToken(c, refreshToken, user.ID.String(), config.TokenTypeRefresh, refreshTokenExpires)
 	if err != nil {
 		s.Log.Errorf("Failed save token: %+v", err)
 		return nil, err
