@@ -1,24 +1,26 @@
 package response
 
+import "app/src/model"
+
 type Common struct {
 	Code    int    `json:"code"`
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
 
-type SuccessWithData[T any] struct {
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
-	Message string `json:"message"`
-	Data    *T     `json:"data"`
+type SuccessWithUser struct {
+	Code    int        `json:"code"`
+	Status  string     `json:"status"`
+	Message string     `json:"message"`
+	User    model.User `json:"user"`
 }
 
-type SuccessWithTokens[T any] struct {
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
-	Message string `json:"message"`
-	Data    *T     `json:"data"`
-	Tokens  Tokens `json:"tokens"`
+type SuccessWithTokens struct {
+	Code    int        `json:"code"`
+	Status  string     `json:"status"`
+	Message string     `json:"message"`
+	User    model.User `json:"user"`
+	Tokens  Tokens     `json:"tokens"`
 }
 
 type SuccessWithPaginate[T any] struct {

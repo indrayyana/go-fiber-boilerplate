@@ -84,11 +84,11 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(response.SuccessWithData[model.User]{
+		JSON(response.SuccessWithUser{
 			Code:    fiber.StatusOK,
 			Status:  "success",
 			Message: "Get user successfully",
-			Data:    user,
+			User:    *user,
 		})
 }
 
@@ -116,11 +116,11 @@ func (u *UserController) CreateUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).
-		JSON(response.SuccessWithData[model.User]{
+		JSON(response.SuccessWithUser{
 			Code:    fiber.StatusCreated,
 			Status:  "success",
 			Message: "Create user successfully",
-			Data:    user,
+			User:    *user,
 		})
 }
 
@@ -155,11 +155,11 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(response.SuccessWithData[model.User]{
+		JSON(response.SuccessWithUser{
 			Code:    fiber.StatusOK,
 			Status:  "success",
 			Message: "Update user successfully",
-			Data:    user,
+			User:    *user,
 		})
 }
 

@@ -4,7 +4,7 @@ type RegisterResponse struct {
 	Code    int    `json:"code" example:"201"`
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Register successfully"`
-	Data    User   `json:"data"`
+	User    User   `json:"user"`
 	Tokens  Tokens `json:"tokens"`
 }
 
@@ -12,7 +12,7 @@ type LoginResponse struct {
 	Code    int    `json:"code" example:"200"`
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Login successfully"`
-	Data    User   `json:"data"`
+	User    User   `json:"user"`
 	Tokens  Tokens `json:"tokens"`
 }
 
@@ -20,7 +20,7 @@ type GoogleLoginResponse struct {
 	Code    int        `json:"code" example:"200"`
 	Status  string     `json:"status" example:"success"`
 	Message string     `json:"message" example:"Login successfully"`
-	Data    GoogleUser `json:"data"`
+	User    GoogleUser `json:"user"`
 	Tokens  Tokens     `json:"tokens"`
 }
 
@@ -51,21 +51,21 @@ type GetUserResponse struct {
 	Code    int    `json:"code" example:"200"`
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Get user successfully"`
-	Data    User   `json:"data"`
+	User    User   `json:"user"`
 }
 
 type CreateUserResponse struct {
 	Code    int    `json:"code" example:"201"`
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Create user successfully"`
-	Data    User   `json:"data"`
+	User    User   `json:"user"`
 }
 
 type UpdateUserResponse struct {
 	Code    int    `json:"code" example:"200"`
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Update user successfully"`
-	Data    User   `json:"data"`
+	User    User   `json:"user"`
 }
 
 type DeleteUserResponse struct {

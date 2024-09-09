@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"app/src/config"
-	"app/src/model"
 	"app/src/response"
 	"app/src/services"
 	"app/src/validation"
@@ -57,11 +56,11 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).
-		JSON(response.SuccessWithTokens[model.User]{
+		JSON(response.SuccessWithTokens{
 			Code:    fiber.StatusCreated,
 			Status:  "success",
 			Message: "Register successfully",
-			Data:    user,
+			User:    *user,
 			Tokens:  *tokens,
 		})
 }
@@ -92,11 +91,11 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(response.SuccessWithTokens[model.User]{
+		JSON(response.SuccessWithTokens{
 			Code:    fiber.StatusOK,
 			Status:  "success",
 			Message: "Login successfully",
-			Data:    user,
+			User:    *user,
 			Tokens:  *tokens,
 		})
 }
@@ -228,11 +227,11 @@ func (a *AuthController) GoogleCallback(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).
-		JSON(response.SuccessWithTokens[model.User]{
+		JSON(response.SuccessWithTokens{
 			Code:    fiber.StatusOK,
 			Status:  "success",
 			Message: "Login successfully",
-			Data:    user,
+			User:    *user,
 			Tokens:  *tokens,
 		})
 }

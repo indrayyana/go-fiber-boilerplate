@@ -479,9 +479,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 201
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Create user successfully"
@@ -489,6 +486,9 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -606,9 +606,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Get user successfully"
@@ -616,6 +613,9 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -625,9 +625,6 @@ const docTemplate = `{
                 "code": {
                     "type": "integer",
                     "example": 200
-                },
-                "data": {
-                    "$ref": "#/definitions/example.GoogleUser"
                 },
                 "message": {
                     "type": "string",
@@ -639,6 +636,9 @@ const docTemplate = `{
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.GoogleUser"
                 }
             }
         },
@@ -674,9 +674,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Login successfully"
@@ -687,6 +684,9 @@ const docTemplate = `{
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -756,9 +756,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 201
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Register successfully"
@@ -769,6 +766,9 @@ const docTemplate = `{
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -820,9 +820,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Update user successfully"
@@ -830,6 +827,9 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },

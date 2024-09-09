@@ -2,7 +2,6 @@ package integration
 
 import (
 	"app/src/config"
-	"app/src/model"
 	"app/src/response"
 	"app/src/utils"
 	"app/src/validation"
@@ -45,7 +44,7 @@ func TestAuthRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithTokens[model.User])
+			responseBody := new(response.SuccessWithTokens)
 
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
@@ -53,15 +52,15 @@ func TestAuthRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, apiResponse.StatusCode)
 			assert.Equal(t, "success", responseBody.Status)
 			assert.NotContains(t, string(bytes), "password")
-			assert.NotNil(t, responseBody.Data.ID)
-			assert.Equal(t, requestBody.Name, responseBody.Data.Name)
-			assert.Equal(t, requestBody.Email, responseBody.Data.Email)
-			assert.Equal(t, "user", responseBody.Data.Role)
-			assert.Equal(t, false, responseBody.Data.VerifiedEmail)
+			assert.NotNil(t, responseBody.User.ID)
+			assert.Equal(t, requestBody.Name, responseBody.User.Name)
+			assert.Equal(t, requestBody.Email, responseBody.User.Email)
+			assert.Equal(t, "user", responseBody.User.Role)
+			assert.Equal(t, false, responseBody.User.VerifiedEmail)
 			assert.NotNil(t, responseBody.Tokens.Access.Token)
 			assert.NotNil(t, responseBody.Tokens.Refresh.Token)
 
-			user, err := helper.GetUserByID(test.DB, responseBody.Data.ID.String())
+			user, err := helper.GetUserByID(test.DB, responseBody.User.ID.String())
 			assert.Nil(t, err)
 
 			assert.NotNil(t, user)
@@ -176,18 +175,18 @@ func TestAuthRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithTokens[model.User])
+			responseBody := new(response.SuccessWithTokens)
 
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
 
 			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 			assert.Equal(t, "success", responseBody.Status)
-			assert.NotNil(t, responseBody.Data.ID)
-			assert.Equal(t, "Test User", responseBody.Data.Name)
-			assert.Equal(t, "test@gmail.com", responseBody.Data.Email)
-			assert.Equal(t, "user", responseBody.Data.Role)
-			assert.Equal(t, false, responseBody.Data.VerifiedEmail)
+			assert.NotNil(t, responseBody.User.ID)
+			assert.Equal(t, "Test User", responseBody.User.Name)
+			assert.Equal(t, "test@gmail.com", responseBody.User.Email)
+			assert.Equal(t, "user", responseBody.User.Role)
+			assert.Equal(t, false, responseBody.User.VerifiedEmail)
 			assert.NotNil(t, responseBody.Tokens.Access.Token)
 			assert.NotNil(t, responseBody.Tokens.Refresh.Token)
 		})

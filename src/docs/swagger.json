@@ -472,9 +472,6 @@
                     "type": "integer",
                     "example": 201
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Create user successfully"
@@ -482,6 +479,9 @@
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -599,9 +599,6 @@
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Get user successfully"
@@ -609,6 +606,9 @@
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -618,9 +618,6 @@
                 "code": {
                     "type": "integer",
                     "example": 200
-                },
-                "data": {
-                    "$ref": "#/definitions/example.GoogleUser"
                 },
                 "message": {
                     "type": "string",
@@ -632,6 +629,9 @@
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.GoogleUser"
                 }
             }
         },
@@ -667,9 +667,6 @@
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Login successfully"
@@ -680,6 +677,9 @@
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -749,9 +749,6 @@
                     "type": "integer",
                     "example": 201
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Register successfully"
@@ -762,6 +759,9 @@
                 },
                 "tokens": {
                     "$ref": "#/definitions/example.Tokens"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },
@@ -813,9 +813,6 @@
                     "type": "integer",
                     "example": 200
                 },
-                "data": {
-                    "$ref": "#/definitions/example.User"
-                },
                 "message": {
                     "type": "string",
                     "example": "Update user successfully"
@@ -823,6 +820,9 @@
                 "status": {
                     "type": "string",
                     "example": "success"
+                },
+                "user": {
+                    "$ref": "#/definitions/example.User"
                 }
             }
         },

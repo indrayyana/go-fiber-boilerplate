@@ -5,14 +5,14 @@ definitions:
       code:
         example: 201
         type: integer
-      data:
-        $ref: '#/definitions/example.User'
       message:
         example: Create user successfully
         type: string
       status:
         example: success
         type: string
+      user:
+        $ref: '#/definitions/example.User'
     type: object
   example.DeleteUserResponse:
     properties:
@@ -95,22 +95,20 @@ definitions:
       code:
         example: 200
         type: integer
-      data:
-        $ref: '#/definitions/example.User'
       message:
         example: Get user successfully
         type: string
       status:
         example: success
         type: string
+      user:
+        $ref: '#/definitions/example.User'
     type: object
   example.GoogleLoginResponse:
     properties:
       code:
         example: 200
         type: integer
-      data:
-        $ref: '#/definitions/example.GoogleUser'
       message:
         example: Login successfully
         type: string
@@ -119,6 +117,8 @@ definitions:
         type: string
       tokens:
         $ref: '#/definitions/example.Tokens'
+      user:
+        $ref: '#/definitions/example.GoogleUser'
     type: object
   example.GoogleUser:
     properties:
@@ -143,8 +143,6 @@ definitions:
       code:
         example: 200
         type: integer
-      data:
-        $ref: '#/definitions/example.User'
       message:
         example: Login successfully
         type: string
@@ -153,6 +151,8 @@ definitions:
         type: string
       tokens:
         $ref: '#/definitions/example.Tokens'
+      user:
+        $ref: '#/definitions/example.User'
     type: object
   example.LogoutResponse:
     properties:
@@ -200,8 +200,6 @@ definitions:
       code:
         example: 201
         type: integer
-      data:
-        $ref: '#/definitions/example.User'
       message:
         example: Register successfully
         type: string
@@ -210,6 +208,8 @@ definitions:
         type: string
       tokens:
         $ref: '#/definitions/example.Tokens'
+      user:
+        $ref: '#/definitions/example.User'
     type: object
   example.TokenExpires:
     properties:
@@ -244,14 +244,14 @@ definitions:
       code:
         example: 200
         type: integer
-      data:
-        $ref: '#/definitions/example.User'
       message:
         example: Update user successfully
         type: string
       status:
         example: success
         type: string
+      user:
+        $ref: '#/definitions/example.User'
     type: object
   example.User:
     properties:

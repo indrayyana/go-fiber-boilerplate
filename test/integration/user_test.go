@@ -47,7 +47,7 @@ func TestUserRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithData[model.User])
+			responseBody := new(response.SuccessWithUser)
 
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
@@ -55,13 +55,13 @@ func TestUserRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, apiResponse.StatusCode)
 			assert.Equal(t, "success", responseBody.Status)
 			assert.NotContains(t, string(bytes), "password")
-			assert.NotNil(t, responseBody.Data.ID)
-			assert.Equal(t, newUser.Name, responseBody.Data.Name)
-			assert.Equal(t, newUser.Email, responseBody.Data.Email)
-			assert.Equal(t, "user", responseBody.Data.Role)
-			assert.Equal(t, false, responseBody.Data.VerifiedEmail)
+			assert.NotNil(t, responseBody.User.ID)
+			assert.Equal(t, newUser.Name, responseBody.User.Name)
+			assert.Equal(t, newUser.Email, responseBody.User.Email)
+			assert.Equal(t, "user", responseBody.User.Role)
+			assert.Equal(t, false, responseBody.User.VerifiedEmail)
 
-			user, err := helper.GetUserByID(test.DB, responseBody.Data.ID.String())
+			user, err := helper.GetUserByID(test.DB, responseBody.User.ID.String())
 			assert.Nil(t, err)
 
 			assert.NotNil(t, user)
@@ -94,15 +94,15 @@ func TestUserRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithData[model.User])
+			responseBody := new(response.SuccessWithUser)
 
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
 
 			assert.Equal(t, http.StatusCreated, apiResponse.StatusCode)
-			assert.Equal(t, responseBody.Data.Role, "admin")
+			assert.Equal(t, responseBody.User.Role, "admin")
 
-			user, err := helper.GetUserByID(test.DB, responseBody.Data.ID.String())
+			user, err := helper.GetUserByID(test.DB, responseBody.User.ID.String())
 			assert.Nil(t, err)
 
 			assert.Equal(t, user.Role, "admin")
@@ -436,17 +436,17 @@ func TestUserRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithData[model.User])
+			responseBody := new(response.SuccessWithUser)
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
 
 			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 			assert.NotContains(t, string(bytes), "password")
-			assert.Equal(t, responseBody.Data.ID, fixture.UserOne.ID)
-			assert.Equal(t, responseBody.Data.Email, fixture.UserOne.Email)
-			assert.Equal(t, responseBody.Data.Name, fixture.UserOne.Name)
-			assert.Equal(t, responseBody.Data.Role, fixture.UserOne.Role)
-			assert.Equal(t, responseBody.Data.VerifiedEmail, fixture.UserOne.VerifiedEmail)
+			assert.Equal(t, responseBody.User.ID, fixture.UserOne.ID)
+			assert.Equal(t, responseBody.User.Email, fixture.UserOne.Email)
+			assert.Equal(t, responseBody.User.Name, fixture.UserOne.Name)
+			assert.Equal(t, responseBody.User.Role, fixture.UserOne.Role)
+			assert.Equal(t, responseBody.User.VerifiedEmail, fixture.UserOne.VerifiedEmail)
 		})
 
 		t.Run("should return 401 error if access token is missing", func(t *testing.T) {
@@ -648,7 +648,7 @@ func TestUserRoutes(t *testing.T) {
 			bytes, err := io.ReadAll(apiResponse.Body)
 			assert.Nil(t, err)
 
-			responseBody := new(response.SuccessWithData[model.User])
+			responseBody := new(response.SuccessWithUser)
 
 			err = json.Unmarshal(bytes, responseBody)
 			assert.Nil(t, err)
@@ -656,13 +656,13 @@ func TestUserRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 			assert.Equal(t, "success", responseBody.Status)
 			assert.NotContains(t, string(bytes), "password")
-			assert.Equal(t, fixture.UserOne.ID, responseBody.Data.ID)
-			assert.Equal(t, updateBody.Name, responseBody.Data.Name)
-			assert.Equal(t, updateBody.Email, responseBody.Data.Email)
-			assert.Equal(t, "user", responseBody.Data.Role)
-			assert.Equal(t, false, responseBody.Data.VerifiedEmail)
+			assert.Equal(t, fixture.UserOne.ID, responseBody.User.ID)
+			assert.Equal(t, updateBody.Name, responseBody.User.Name)
+			assert.Equal(t, updateBody.Email, responseBody.User.Email)
+			assert.Equal(t, "user", responseBody.User.Role)
+			assert.Equal(t, false, responseBody.User.VerifiedEmail)
 
-			user, err := helper.GetUserByID(test.DB, responseBody.Data.ID.String())
+			user, err := helper.GetUserByID(test.DB, responseBody.User.ID.String())
 			assert.Nil(t, err)
 
 			assert.NotNil(t, user)
