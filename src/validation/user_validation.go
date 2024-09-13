@@ -15,7 +15,7 @@ type UpdateUser struct {
 
 type UpdatePassOrVerify struct {
 	Password      string `json:"password,omitempty" validate:"omitempty,min=8,max=20,password" example:"password1"`
-	VerifiedEmail bool   `json:"verified_email" validate:"omitempty,boolean"`
+	VerifiedEmail bool   `json:"verified_email" swaggerignore:"true" validate:"omitempty,boolean"`
 }
 
 type QueryUser struct {

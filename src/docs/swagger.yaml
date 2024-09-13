@@ -50,6 +50,18 @@ definitions:
         example: error
         type: string
     type: object
+  example.FailedResetPassword:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Password reset failed
+        type: string
+      status:
+        example: error
+        type: string
+    type: object
   example.Forbidden:
     properties:
       code:
@@ -60,6 +72,18 @@ definitions:
         type: string
       status:
         example: error
+        type: string
+    type: object
+  example.ForgotPasswordResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: A password reset link has been sent to your email address.
+        type: string
+      status:
+        example: success
         type: string
     type: object
   example.GetAllUserResponse:
@@ -211,6 +235,18 @@ definitions:
       user:
         $ref: '#/definitions/example.User'
     type: object
+  example.ResetPasswordResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: Update password successfully
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
   example.TokenExpires:
     properties:
       expires:
@@ -299,6 +335,15 @@ definitions:
     - password
     - role
     type: object
+  validation.ForgotPassword:
+    properties:
+      email:
+        example: fake@example.com
+        maxLength: 50
+        type: string
+    required:
+    - email
+    type: object
   validation.Login:
     properties:
       email:
@@ -334,6 +379,14 @@ definitions:
     - name
     - password
     type: object
+  validation.UpdatePassOrVerify:
+    properties:
+      password:
+        example: password1
+        maxLength: 20
+        minLength: 8
+        type: string
+    type: object
   validation.UpdateUser:
     properties:
       email:
@@ -359,6 +412,32 @@ info:
   title: go-fiber-boilerplate API documentation
   version: 1.0.0
 paths:
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: An email will be sent to reset password.
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/validation.ForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.ForgotPasswordResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/example.NotFound'
+      summary: Forgot password
+      tags:
+      - Auth
   /auth/google:
     get:
       description: This route initiates the Google OAuth2 login flow. Please try this
@@ -469,6 +548,36 @@ paths:
           schema:
             $ref: '#/definitions/example.DuplicateEmail'
       summary: Register as user
+      tags:
+      - Auth
+  /auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: The reset password token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/validation.UpdatePassOrVerify'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.ResetPasswordResponse'
+        "401":
+          description: Password reset failed
+          schema:
+            $ref: '#/definitions/example.FailedResetPassword'
+      summary: Reset password
       tags:
       - Auth
   /users:

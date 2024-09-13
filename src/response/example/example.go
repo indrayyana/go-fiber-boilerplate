@@ -36,6 +36,18 @@ type RefreshTokenResponse struct {
 	Tokens Tokens `json:"tokens"`
 }
 
+type ForgotPasswordResponse struct {
+	Code    int    `json:"code" example:"200"`
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"A password reset link has been sent to your email address."`
+}
+
+type ResetPasswordResponse struct {
+	Code    int    `json:"code" example:"200"`
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"Update password successfully"`
+}
+
 type GetAllUserResponse struct {
 	Code         int    `json:"code" example:"200"`
 	Status       string `json:"status" example:"success"`

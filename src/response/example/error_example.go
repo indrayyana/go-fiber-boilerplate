@@ -12,6 +12,12 @@ type FailedLogin struct {
 	Message string `json:"message" example:"Invalid email or password"`
 }
 
+type FailedResetPassword struct {
+	Code    int    `json:"code" example:"401"`
+	Status  string `json:"status" example:"error"`
+	Message string `json:"message" example:"Password reset failed"`
+}
+
 type Forbidden struct {
 	Code    int    `json:"code" example:"403"`
 	Status  string `json:"status" example:"error"`

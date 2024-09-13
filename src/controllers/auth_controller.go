@@ -159,6 +159,15 @@ func (a *AuthController) RefreshTokens(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Forgot password
+// @Description  An email will be sent to reset password.
+// @Accept       json
+// @Produce      json
+// @Param        request  body  validation.ForgotPassword  true  "Request body"
+// @Router       /auth/forgot-password [post]
+// @Success      200  {object}  example.ForgotPasswordResponse
+// @Failure      404  {object}  example.NotFound  "Not found"
 func (a *AuthController) ForgotPassword(c *fiber.Ctx) error {
 	req := new(validation.ForgotPassword)
 
@@ -183,6 +192,15 @@ func (a *AuthController) ForgotPassword(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Reset password
+// @Accept       json
+// @Produce      json
+// @Param        token   query  string  true  "The reset password token"
+// @Param        request  body  validation.UpdatePassOrVerify  true  "Request body"
+// @Router       /auth/reset-password [post]
+// @Success      200  {object}  example.ResetPasswordResponse
+// @Failure      401  {object}  example.FailedResetPassword  "Password reset failed"
 func (a *AuthController) ResetPassword(c *fiber.Ctx) error {
 	req := new(validation.UpdatePassOrVerify)
 	query := &validation.Token{
