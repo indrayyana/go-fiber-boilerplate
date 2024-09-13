@@ -278,6 +278,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/send-verification-email": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "An email will be sent to verify email.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Send verification email",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/example.SendVerificationEmailResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/example.Unauthorized"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verify-email": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The verify email token",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/example.VerifyEmailResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Verify email failed",
+                        "schema": {
+                            "$ref": "#/definitions/example.FailedVerifyEmail"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -646,6 +711,23 @@ const docTemplate = `{
                 }
             }
         },
+        "example.FailedVerifyEmail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Verify email failed"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "error"
+                }
+            }
+        },
         "example.Forbidden": {
             "type": "object",
             "properties": {
@@ -909,6 +991,23 @@ const docTemplate = `{
                 }
             }
         },
+        "example.SendVerificationEmailResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Please check your email for a link to verify your account"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
         "example.TokenExpires": {
             "type": "object",
             "properties": {
@@ -992,6 +1091,23 @@ const docTemplate = `{
                 "verified_email": {
                     "type": "boolean",
                     "example": false
+                }
+            }
+        },
+        "example.VerifyEmailResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Verify email successfully"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },

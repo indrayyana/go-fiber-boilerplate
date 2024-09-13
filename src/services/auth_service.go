@@ -165,7 +165,7 @@ func (s *authService) VerifyEmail(c *fiber.Ctx, query *validation.Token) error {
 
 	user, err := s.UserService.GetUserByID(c, userID)
 	if err != nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "Email verification failed")
+		return fiber.NewError(fiber.StatusUnauthorized, "Verify email failed")
 	}
 
 	if errToken := s.TokenService.DeleteToken(c, config.TokenTypeVerifyEmail, user.ID.String()); errToken != nil {

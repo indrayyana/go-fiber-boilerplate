@@ -48,6 +48,18 @@ type ResetPasswordResponse struct {
 	Message string `json:"message" example:"Update password successfully"`
 }
 
+type SendVerificationEmailResponse struct {
+	Code    int    `json:"code" example:"200"`
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"Please check your email for a link to verify your account"`
+}
+
+type VerifyEmailResponse struct {
+	Code    int    `json:"code" example:"200"`
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"Verify email successfully"`
+}
+
 type GetAllUserResponse struct {
 	Code         int    `json:"code" example:"200"`
 	Status       string `json:"status" example:"success"`

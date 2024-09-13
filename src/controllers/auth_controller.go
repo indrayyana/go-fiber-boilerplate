@@ -223,6 +223,14 @@ func (a *AuthController) ResetPassword(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Send verification email
+// @Description  An email will be sent to verify email.
+// @Security BearerAuth
+// @Produce      json
+// @Router       /auth/send-verification-email [post]
+// @Success      200  {object}  example.SendVerificationEmailResponse
+// @Failure      401  {object}  example.Unauthorized  "Unauthorized"
 func (a *AuthController) SendVerificationEmail(c *fiber.Ctx) error {
 	user, _ := c.Locals("user").(*model.User)
 
@@ -243,6 +251,13 @@ func (a *AuthController) SendVerificationEmail(c *fiber.Ctx) error {
 		})
 }
 
+// @Tags         Auth
+// @Summary      Verify email
+// @Produce      json
+// @Param        token   query  string  true  "The verify email token"
+// @Router       /auth/verify-email [post]
+// @Success      200  {object}  example.VerifyEmailResponse
+// @Failure      401  {object}  example.FailedVerifyEmail  "Verify email failed"
 func (a *AuthController) VerifyEmail(c *fiber.Ctx) error {
 	query := &validation.Token{
 		Token: c.Query("token"),

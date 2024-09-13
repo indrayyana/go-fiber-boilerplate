@@ -62,6 +62,18 @@ definitions:
         example: error
         type: string
     type: object
+  example.FailedVerifyEmail:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Verify email failed
+        type: string
+      status:
+        example: error
+        type: string
+    type: object
   example.Forbidden:
     properties:
       code:
@@ -247,6 +259,18 @@ definitions:
         example: success
         type: string
     type: object
+  example.SendVerificationEmailResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: Please check your email for a link to verify your account
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
   example.TokenExpires:
     properties:
       expires:
@@ -306,6 +330,18 @@ definitions:
       verified_email:
         example: false
         type: boolean
+    type: object
+  example.VerifyEmailResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: Verify email successfully
+        type: string
+      status:
+        example: success
+        type: string
     type: object
   validation.CreateUser:
     properties:
@@ -578,6 +614,47 @@ paths:
           schema:
             $ref: '#/definitions/example.FailedResetPassword'
       summary: Reset password
+      tags:
+      - Auth
+  /auth/send-verification-email:
+    post:
+      description: An email will be sent to verify email.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.SendVerificationEmailResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/example.Unauthorized'
+      security:
+      - BearerAuth: []
+      summary: Send verification email
+      tags:
+      - Auth
+  /auth/verify-email:
+    post:
+      parameters:
+      - description: The verify email token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.VerifyEmailResponse'
+        "401":
+          description: Verify email failed
+          schema:
+            $ref: '#/definitions/example.FailedVerifyEmail'
+      summary: Verify email
       tags:
       - Auth
   /users:
