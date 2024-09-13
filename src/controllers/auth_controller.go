@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"app/src/config"
+	"app/src/model"
 	"app/src/response"
 	"app/src/services"
 	"app/src/validation"
@@ -18,15 +19,18 @@ type AuthController struct {
 	AuthService  services.AuthService
 	UserService  services.UserService
 	TokenService services.TokenService
+	EmailService services.EmailService
 }
 
 func NewAuthController(
-	authService services.AuthService, userService services.UserService, tokenService services.TokenService,
+	authService services.AuthService, userService services.UserService,
+	tokenService services.TokenService, emailService services.EmailService,
 ) *AuthController {
 	return &AuthController{
 		AuthService:  authService,
 		UserService:  userService,
 		TokenService: tokenService,
+		EmailService: emailService,
 	}
 }
 
@@ -109,7 +113,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 // @Success      200  {object}  example.LogoutResponse
 // @Failure      404  {object}  example.NotFound  "Not found"
 func (a *AuthController) Logout(c *fiber.Ctx) error {
-	req := new(validation.RefreshToken)
+	req := new(validation.Logout)
 
 	if err := c.BodyParser(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
@@ -135,14 +139,14 @@ func (a *AuthController) Logout(c *fiber.Ctx) error {
 // @Router       /auth/refresh-tokens [post]
 // @Success      200  {object}  example.RefreshTokenResponse
 // @Failure      401  {object}  example.Unauthorized  "Unauthorized"
-func (a *AuthController) RefreshToken(c *fiber.Ctx) error {
+func (a *AuthController) RefreshTokens(c *fiber.Ctx) error {
 	req := new(validation.RefreshToken)
 
 	if err := c.BodyParser(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	tokens, err := a.AuthService.RefreshToken(c, req)
+	tokens, err := a.AuthService.RefreshAuth(c, req)
 	if err != nil {
 		return err
 	}
@@ -152,6 +156,89 @@ func (a *AuthController) RefreshToken(c *fiber.Ctx) error {
 			Code:   fiber.StatusOK,
 			Status: "success",
 			Tokens: *tokens,
+		})
+}
+
+func (a *AuthController) ForgotPassword(c *fiber.Ctx) error {
+	req := new(validation.ForgotPassword)
+
+	if err := c.BodyParser(req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	resetPasswordToken, err := a.TokenService.GenerateResetPasswordToken(c, req)
+	if err != nil {
+		return err
+	}
+
+	if errEmail := a.EmailService.SendResetPasswordEmail(req.Email, resetPasswordToken); errEmail != nil {
+		return errEmail
+	}
+
+	return c.Status(fiber.StatusOK).
+		JSON(response.Common{
+			Code:    fiber.StatusOK,
+			Status:  "success",
+			Message: "A password reset link has been sent to your email address.",
+		})
+}
+
+func (a *AuthController) ResetPassword(c *fiber.Ctx) error {
+	req := new(validation.UpdatePassOrVerify)
+	query := &validation.Token{
+		Token: c.Query("token"),
+	}
+
+	if err := c.BodyParser(req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	if err := a.AuthService.ResetPassword(c, query, req); err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).
+		JSON(response.Common{
+			Code:    fiber.StatusOK,
+			Status:  "success",
+			Message: "Update password successfully",
+		})
+}
+
+func (a *AuthController) SendVerificationEmail(c *fiber.Ctx) error {
+	user, _ := c.Locals("user").(*model.User)
+
+	verifyEmailToken, err := a.TokenService.GenerateVerifyEmailToken(c, user)
+	if err != nil {
+		return err
+	}
+
+	if errEmail := a.EmailService.SendVerificationEmail(user.Email, *verifyEmailToken); errEmail != nil {
+		return errEmail
+	}
+
+	return c.Status(fiber.StatusOK).
+		JSON(response.Common{
+			Code:    fiber.StatusOK,
+			Status:  "success",
+			Message: "Please check your email for a link to verify your account",
+		})
+}
+
+func (a *AuthController) VerifyEmail(c *fiber.Ctx) error {
+	query := &validation.Token{
+		Token: c.Query("token"),
+	}
+
+	if err := a.AuthService.VerifyEmail(c, query); err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).
+		JSON(response.Common{
+			Code:    fiber.StatusOK,
+			Status:  "success",
+			Message: "Verify email successfully",
 		})
 }
 

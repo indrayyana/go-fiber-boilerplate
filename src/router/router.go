@@ -12,13 +12,14 @@ import (
 func Routes(app *fiber.App, db *gorm.DB) {
 	validate := validation.Validator()
 
+	emailService := services.NewEmailService()
 	userService := services.NewUserService(db, validate)
-	tokenService := services.NewTokenService(db)
+	tokenService := services.NewTokenService(db, validate, userService)
 	authService := services.NewAuthService(db, validate, userService, tokenService)
 
 	v1 := app.Group("/v1")
 
-	AuthRoutes(v1, authService, userService, tokenService)
+	AuthRoutes(v1, authService, userService, tokenService, emailService)
 	UserRoutes(v1, userService, tokenService)
 	// add another routes here...
 

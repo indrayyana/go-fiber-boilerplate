@@ -7,20 +7,27 @@ import (
 )
 
 var (
-	IsProd             bool
-	AppHost            string
-	AppPort            int
-	DBHost             string
-	DBUser             string
-	DBPassword         string
-	DBName             string
-	DBPort             int
-	JWTSecret          string
-	JWTAccessExp       int
-	JWTRefreshExp      int
-	GoogleClientID     string
-	GoogleClientSecret string
-	RedirectURL        string
+	IsProd              bool
+	AppHost             string
+	AppPort             int
+	DBHost              string
+	DBUser              string
+	DBPassword          string
+	DBName              string
+	DBPort              int
+	JWTSecret           string
+	JWTAccessExp        int
+	JWTRefreshExp       int
+	JWTResetPasswordExp int
+	JWTVerifyEmailExp   int
+	SMTPHost            string
+	SMTPPort            int
+	SMTPUsername        string
+	SMTPPassword        string
+	EmailFrom           string
+	GoogleClientID      string
+	GoogleClientSecret  string
+	RedirectURL         string
 )
 
 func init() {
@@ -42,6 +49,15 @@ func init() {
 	JWTSecret = viper.GetString("JWT_SECRET")
 	JWTAccessExp = viper.GetInt("JWT_ACCESS_EXP_MINUTES")
 	JWTRefreshExp = viper.GetInt("JWT_REFRESH_EXP_DAYS")
+	JWTResetPasswordExp = viper.GetInt("JWT_RESET_PASSWORD_EXP_MINUTES")
+	JWTVerifyEmailExp = viper.GetInt("JWT_VERIFY_EMAIL_EXP_MINUTES")
+
+	// SMTP configuration
+	SMTPHost = viper.GetString("SMTP_HOST")
+	SMTPPort = viper.GetInt("SMTP_PORT")
+	SMTPUsername = viper.GetString("SMTP_USERNAME")
+	SMTPPassword = viper.GetString("SMTP_PASSWORD")
+	EmailFrom = viper.GetString("EMAIL_FROM")
 
 	// oauth2 configuration
 	GoogleClientID = viper.GetString("GOOGLE_CLIENT_ID")

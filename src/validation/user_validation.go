@@ -13,6 +13,11 @@ type UpdateUser struct {
 	Password string `json:"password,omitempty" validate:"omitempty,min=8,max=20,password" example:"password1"`
 }
 
+type UpdatePassOrVerify struct {
+	Password      string `json:"password,omitempty" validate:"omitempty,min=8,max=20,password" example:"password1"`
+	VerifiedEmail bool   `json:"verified_email" validate:"omitempty,boolean"`
+}
+
 type QueryUser struct {
 	Page   int    `validate:"omitempty,number,max=50"`
 	Limit  int    `validate:"omitempty,number,max=50"`

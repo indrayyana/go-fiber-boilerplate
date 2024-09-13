@@ -2,6 +2,7 @@
 
 ![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![Repository size](https://img.shields.io/github/repo-size/indrayyana/go-fiber-boilerplate?color=56BEB8)
 ![License](https://img.shields.io/dub/l/vibe-d.svg)
 
 A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
@@ -143,6 +144,17 @@ JWT_SECRET=thisisasamplesecret
 JWT_ACCESS_EXP_MINUTES=30
 # Number of days after which a refresh token expires
 JWT_REFRESH_EXP_DAYS=30
+# Number of minutes after which a reset password token expires
+JWT_RESET_PASSWORD_EXP_MINUTES=10
+# Number of minutes after which a verify email token expires
+JWT_VERIFY_EMAIL_EXP_MINUTES=10
+
+# SMTP configuration options for the email service
+SMTP_HOST=email-server
+SMTP_PORT=587
+SMTP_USERNAME=email-server-username
+SMTP_PASSWORD=email-server-password
+EMAIL_FROM=support@yourapp.com
 
 # OAuth2 configuration
 GOOGLE_CLIENT_ID=yourapps.googleusercontent.com
@@ -183,6 +195,10 @@ List of available routes:
 `POST /v1/auth/login` - login\
 `POST /v1/auth/logout` - logout\
 `POST /v1/auth/refresh-tokens` - refresh auth tokens\
+`POST /v1/auth/forgot-password` - send reset password email\
+`POST /v1/auth/reset-password` - reset password\
+`POST /v1/auth/send-verification-email` - send verification email\
+`POST /v1/auth/verify-email` - verify email\
 `GET /v1/auth/google` - login with google account
 
 **User routes**:\

@@ -17,6 +17,7 @@ type UserService interface {
 	GetUserByID(c *fiber.Ctx, id string) (*model.User, error)
 	GetUserByEmail(c *fiber.Ctx, email string) (*model.User, error)
 	CreateUser(c *fiber.Ctx, req *validation.CreateUser) (*model.User, error)
+	UpdatePassOrVerify(c *fiber.Ctx, req *validation.UpdatePassOrVerify, id string) error
 	UpdateUser(c *fiber.Ctx, req *validation.UpdateUser, id string) (*model.User, error)
 	DeleteUser(c *fiber.Ctx, id string) error
 	CreateGoogleUser(c *fiber.Ctx, req *validation.GoogleLogin) (*model.User, error)
@@ -173,6 +174,41 @@ func (s *userService) UpdateUser(c *fiber.Ctx, req *validation.UpdateUser, id st
 	}
 
 	return user, result.Error
+}
+
+func (s *userService) UpdatePassOrVerify(c *fiber.Ctx, req *validation.UpdatePassOrVerify, id string) error {
+	if err := s.Validate.Struct(req); err != nil {
+		return err
+	}
+
+	if req.Password == "" && !req.VerifiedEmail {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid Request")
+	}
+
+	if req.Password != "" {
+		hashedPassword, err := utils.HashPassword(req.Password)
+		if err != nil {
+			return err
+		}
+		req.Password = hashedPassword
+	}
+
+	updateBody := &model.User{
+		Password:      req.Password,
+		VerifiedEmail: req.VerifiedEmail,
+	}
+
+	result := s.DB.WithContext(c.Context()).Where("id = ?", id).Updates(updateBody)
+
+	if result.RowsAffected == 0 {
+		return fiber.NewError(fiber.StatusNotFound, "User not found")
+	}
+
+	if result.Error != nil {
+		s.Log.Errorf("Failed to update user password or verifiedEmail: %+v", result.Error)
+	}
+
+	return result.Error
 }
 
 func (s *userService) DeleteUser(c *fiber.Ctx, id string) error {

@@ -1,6 +1,8 @@
 package config
 
 const (
-	TokenTypeAccess  = "access"
-	TokenTypeRefresh = "refresh"
+	TokenTypeAccess        = "access"
+	TokenTypeRefresh       = "refresh"
+	TokenTypeResetPassword = "resetPassword"
+	TokenTypeVerifyEmail   = "verifyEmail"
 )

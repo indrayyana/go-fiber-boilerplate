@@ -146,7 +146,7 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(req); err != nil {
-		return err
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
 	user, err := u.UserService.UpdateUser(c, req, userID)
@@ -181,7 +181,7 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid user ID")
 	}
 
-	if err := u.TokenService.DeleteToken(c, userID); err != nil {
+	if err := u.TokenService.DeleteAllToken(c, userID); err != nil {
 		return err
 	}
 

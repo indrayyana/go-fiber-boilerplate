@@ -68,14 +68,15 @@ func InsertUser(db *gorm.DB, users ...*model.User) {
 	}
 }
 
-func SaveToken(db *gorm.DB, token string, userID string, expires time.Time) error {
-	if err := DeleteToken(db, userID); err != nil {
+func SaveToken(db *gorm.DB, token, userID, tokenType string, expires time.Time) error {
+	if err := DeleteToken(db, tokenType, userID); err != nil {
 		return err
 	}
 
 	tokenDoc := &model.Token{
 		Token:   token,
 		UserID:  uuid.MustParse(userID),
+		Type:    tokenType,
 		Expires: expires,
 	}
 
@@ -84,10 +85,10 @@ func SaveToken(db *gorm.DB, token string, userID string, expires time.Time) erro
 	return result.Error
 }
 
-func DeleteToken(db *gorm.DB, userID string) error {
+func DeleteToken(db *gorm.DB, tokenType, userID string) error {
 	tokenDoc := new(model.Token)
 
-	result := db.Where("user_id = ?", userID).Delete(tokenDoc)
+	result := db.Where("type = ? AND user_id = ?", tokenType, userID).Delete(tokenDoc)
 
 	return result.Error
 }

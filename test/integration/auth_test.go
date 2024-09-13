@@ -259,7 +259,7 @@ func TestAuthRoutes(t *testing.T) {
 			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
 			assert.Nil(t, err)
 
-			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), config.TokenTypeRefresh, fixture.ExpiresRefreshToken)
 			assert.Nil(t, err)
 
 			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
@@ -315,7 +315,7 @@ func TestAuthRoutes(t *testing.T) {
 			refreshToken, err := fixture.RefreshToken(fixture.UserOne)
 			assert.Nil(t, err)
 
-			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), config.TokenTypeRefresh, fixture.ExpiresRefreshToken)
 			assert.Nil(t, err)
 
 			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
@@ -365,7 +365,7 @@ func TestAuthRoutes(t *testing.T) {
 			refreshToken, err := helper.GenerateInvalidToken(fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken, config.TokenTypeRefresh)
 			assert.Nil(t, err)
 
-			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), config.TokenTypeRefresh, fixture.ExpiresRefreshToken)
 			assert.Nil(t, err)
 
 			bodyJSON, err := json.Marshal(validation.RefreshToken{RefreshToken: refreshToken})
@@ -409,7 +409,7 @@ func TestAuthRoutes(t *testing.T) {
 			refreshToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), expires, config.TokenTypeRefresh)
 			assert.Nil(t, err)
 
-			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), fixture.ExpiresRefreshToken)
+			err = helper.SaveToken(test.DB, refreshToken, fixture.UserOne.ID.String(), config.TokenTypeRefresh, fixture.ExpiresRefreshToken)
 			assert.Nil(t, err)
 
 			time.Sleep(2 * time.Second)

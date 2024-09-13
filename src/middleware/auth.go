@@ -28,7 +28,7 @@ func Auth(userService services.UserService, requiredRights ...string) fiber.Hand
 			return fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
 		}
 
-		c.Locals("userID", userID)
+		c.Locals("user", user)
 
 		if len(requiredRights) > 0 {
 			userRights, hasRights := config.RoleRights[user.Role]

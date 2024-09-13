@@ -1,6 +1,7 @@
 package services
 
 import (
+	"app/src/config"
 	"app/src/model"
 	"app/src/response"
 	"app/src/utils"
@@ -16,8 +17,10 @@ import (
 type AuthService interface {
 	Register(c *fiber.Ctx, req *validation.Register) (*model.User, error)
 	Login(c *fiber.Ctx, req *validation.Login) (*model.User, error)
-	Logout(c *fiber.Ctx, req *validation.RefreshToken) error
-	RefreshToken(c *fiber.Ctx, req *validation.RefreshToken) (*response.Tokens, error)
+	Logout(c *fiber.Ctx, req *validation.Logout) error
+	RefreshAuth(c *fiber.Ctx, req *validation.RefreshToken) (*response.Tokens, error)
+	ResetPassword(c *fiber.Ctx, query *validation.Token, req *validation.UpdatePassOrVerify) error
+	VerifyEmail(c *fiber.Ctx, query *validation.Token) error
 }
 
 type authService struct {
@@ -86,7 +89,7 @@ func (s *authService) Login(c *fiber.Ctx, req *validation.Login) (*model.User, e
 	return user, nil
 }
 
-func (s *authService) Logout(c *fiber.Ctx, req *validation.RefreshToken) error {
+func (s *authService) Logout(c *fiber.Ctx, req *validation.Logout) error {
 	if err := s.Validate.Struct(req); err != nil {
 		return err
 	}
@@ -96,12 +99,12 @@ func (s *authService) Logout(c *fiber.Ctx, req *validation.RefreshToken) error {
 		return fiber.NewError(fiber.StatusNotFound, "Token not found")
 	}
 
-	err = s.TokenService.DeleteToken(c, token.UserID.String())
+	err = s.TokenService.DeleteToken(c, config.TokenTypeRefresh, token.UserID.String())
 
 	return err
 }
 
-func (s *authService) RefreshToken(c *fiber.Ctx, req *validation.RefreshToken) (*response.Tokens, error) {
+func (s *authService) RefreshAuth(c *fiber.Ctx, req *validation.RefreshToken) (*response.Tokens, error) {
 	if err := s.Validate.Struct(req); err != nil {
 		return nil, err
 	}
@@ -122,4 +125,60 @@ func (s *authService) RefreshToken(c *fiber.Ctx, req *validation.RefreshToken) (
 	}
 
 	return newTokens, err
+}
+
+func (s *authService) ResetPassword(c *fiber.Ctx, query *validation.Token, req *validation.UpdatePassOrVerify) error {
+	if err := s.Validate.Struct(query); err != nil {
+		return err
+	}
+
+	userID, err := utils.VerifyToken(query.Token, config.JWTSecret, config.TokenTypeResetPassword)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid Token")
+	}
+
+	user, err := s.UserService.GetUserByID(c, userID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "Password reset failed")
+	}
+
+	if errUpdate := s.UserService.UpdatePassOrVerify(c, req, user.ID.String()); errUpdate != nil {
+		return errUpdate
+	}
+
+	if errToken := s.TokenService.DeleteToken(c, config.TokenTypeResetPassword, user.ID.String()); errToken != nil {
+		return errToken
+	}
+
+	return nil
+}
+
+func (s *authService) VerifyEmail(c *fiber.Ctx, query *validation.Token) error {
+	if err := s.Validate.Struct(query); err != nil {
+		return err
+	}
+
+	userID, err := utils.VerifyToken(query.Token, config.JWTSecret, config.TokenTypeVerifyEmail)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid Token")
+	}
+
+	user, err := s.UserService.GetUserByID(c, userID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "Email verification failed")
+	}
+
+	if errToken := s.TokenService.DeleteToken(c, config.TokenTypeVerifyEmail, user.ID.String()); errToken != nil {
+		return errToken
+	}
+
+	updateBody := &validation.UpdatePassOrVerify{
+		VerifiedEmail: true,
+	}
+
+	if errUpdate := s.UserService.UpdatePassOrVerify(c, updateBody, user.ID.String()); errUpdate != nil {
+		return errUpdate
+	}
+
+	return nil
 }
