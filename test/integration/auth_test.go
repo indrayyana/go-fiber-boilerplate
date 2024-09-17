@@ -427,6 +427,307 @@ func TestAuthRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
 		})
 	})
+	t.Run("POST /v1/auth/forgot-password", func(t *testing.T) {
+		// TODO: not finished yet
+		// t.Run("should return 200 and send reset password email to the user", func(t *testing.T) {
+		// 	helper.ClearAll(test.DB)
+		// 	helper.InsertUser(test.DB, fixture.UserOne)
+
+		// 	requestBody := validation.ForgotPassword{
+		// 		Email: fixture.UserOne.Email,
+		// 	}
+
+		// 	bodyJSON, err := json.Marshal(requestBody)
+		// 	assert.Nil(t, err)
+
+		// 	request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", strings.NewReader(string(bodyJSON)))
+		// 	request.Header.Set("Content-Type", "application/json")
+		// 	request.Header.Set("Accept", "application/json")
+
+		// 	apiResponse, err := test.App.Test(request)
+		// 	assert.Nil(t, err)
+
+		// 	assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+		// })
+
+		t.Run("should return 400 if email is missing", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 404 if email does not belong to any user", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+
+			requestBody := validation.ForgotPassword{
+				Email: fixture.UserOne.Email,
+			}
+
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusNotFound, apiResponse.StatusCode)
+		})
+	})
+	t.Run("POST /v1/auth/reset-password", func(t *testing.T) {
+		t.Run("should return 200 and reset the password", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			resetPasswordToken, err := fixture.ResetPasswordToken(fixture.UserOne)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, resetPasswordToken, fixture.UserOne.ID.String(), config.TokenTypeResetPassword, fixture.ExpiresResetPasswordToken)
+			assert.Nil(t, err)
+
+			requestBody := validation.UpdatePassOrVerify{
+				Password: "password2",
+			}
+
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+
+			user, err := helper.GetUserByID(test.DB, fixture.UserOne.ID.String())
+			assert.Nil(t, err)
+
+			isPasswordMatch := utils.CheckPasswordHash("password2", user.Password)
+			assert.True(t, isPasswordMatch)
+
+			dbResetPasswordTokenDoc, _ := helper.GetTokenByUserID(test.DB, resetPasswordToken)
+			assert.Nil(t, dbResetPasswordTokenDoc)
+		})
+
+		t.Run("should return 400 if reset password token is missing", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			requestBody := validation.UpdatePassOrVerify{
+				Password: "password2",
+			}
+
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 401 if reset password token is expired", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			expires := time.Now().Add(time.Second * 1)
+			resetPasswordToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), expires, config.TokenTypeResetPassword)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, resetPasswordToken, fixture.UserOne.ID.String(), config.TokenTypeResetPassword, fixture.ExpiresResetPasswordToken)
+			assert.Nil(t, err)
+
+			time.Sleep(2 * time.Second)
+
+			requestBody := validation.UpdatePassOrVerify{
+				Password: "password2",
+			}
+
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 400 if password is missing or invalid", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			resetPasswordToken, err := fixture.ResetPasswordToken(fixture.UserOne)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, resetPasswordToken, fixture.UserOne.ID.String(), config.TokenTypeResetPassword, fixture.ExpiresResetPasswordToken)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+
+			bodyJSON, err := json.Marshal(validation.UpdatePassOrVerify{Password: "short1"})
+			assert.Nil(t, err)
+
+			request = httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err = test.App.Test(request)
+			assert.Nil(t, err)
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+
+			bodyJSON, err = json.Marshal(validation.UpdatePassOrVerify{Password: "password"})
+			assert.Nil(t, err)
+
+			request = httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err = test.App.Test(request)
+			assert.Nil(t, err)
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+
+			bodyJSON, err = json.Marshal(validation.UpdatePassOrVerify{Password: "11111111"})
+			assert.Nil(t, err)
+
+			request = httptest.NewRequest(http.MethodPost, "/v1/auth/reset-password?token="+resetPasswordToken, strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err = test.App.Test(request)
+			assert.Nil(t, err)
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+		})
+	})
+	t.Run("POST /v1/auth/send-verification-email", func(t *testing.T) {
+		// TODO: not finished yet
+		// t.Run("should return 200 and send verification email to the user", func(t *testing.T) {
+		// 	helper.ClearAll(test.DB)
+		// 	helper.InsertUser(test.DB, fixture.UserOne)
+
+		// 	verifyEmailToken, err := fixture.VerifyEmailToken(fixture.UserOne)
+		// 	assert.Nil(t, err)
+
+		// 	request := httptest.NewRequest(http.MethodPost, "/v1/auth/send-verification-email", nil)
+		// 	request.Header.Set("Content-Type", "application/json")
+		// 	request.Header.Set("Accept", "application/json")
+		// 	request.Header.Set("Authorization", "Bearer "+verifyEmailToken)
+
+		// 	apiResponse, err := test.App.Test(request)
+		// 	assert.Nil(t, err)
+
+		// 	assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+
+		// 	dbVerifyEmailTokenDoc, _ := helper.GetTokenByUserID(test.DB, verifyEmailToken)
+		// 	assert.NotNil(t, dbVerifyEmailTokenDoc)
+		// })
+
+		t.Run("should return 401 error if access token is missing", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/send-verification-email", nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+	})
+	t.Run("POST /v1/auth/verify-email", func(t *testing.T) {
+		t.Run("should return 200 and verify the email", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			verifyEmailToken, err := fixture.VerifyEmailToken(fixture.UserOne)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, verifyEmailToken, fixture.UserOne.ID.String(), config.TokenTypeVerifyEmail, fixture.ExpiresVerifyEmailToken)
+			assert.Nil(t, err)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/verify-email?token="+verifyEmailToken, nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+
+			user, err := helper.GetUserByID(test.DB, fixture.UserOne.ID.String())
+			assert.Nil(t, err)
+
+			assert.True(t, user.VerifiedEmail)
+
+			dbVerifyEmailTokenDoc, _ := helper.GetTokenByUserID(test.DB, verifyEmailToken)
+			assert.Nil(t, dbVerifyEmailTokenDoc)
+		})
+
+		t.Run("should return 400 if verify email token is missing", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/verify-email", nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusBadRequest, apiResponse.StatusCode)
+		})
+
+		t.Run("should return 401 if verify email token is expired", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
+
+			expires := time.Now().Add(time.Second * 1)
+			verifyEmailToken, err := helper.GenerateToken(fixture.UserOne.ID.String(), expires, config.TokenTypeVerifyEmail)
+			assert.Nil(t, err)
+
+			err = helper.SaveToken(test.DB, verifyEmailToken, fixture.UserOne.ID.String(), config.TokenTypeVerifyEmail, fixture.ExpiresVerifyEmailToken)
+			assert.Nil(t, err)
+
+			time.Sleep(2 * time.Second)
+
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/verify-email?token="+verifyEmailToken, nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+
+			apiResponse, err := test.App.Test(request)
+			assert.Nil(t, err)
+
+			assert.Equal(t, http.StatusUnauthorized, apiResponse.StatusCode)
+		})
+	})
 }
 
 func TestAuthMiddleware(t *testing.T) {
