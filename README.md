@@ -82,6 +82,16 @@ Running locally:
 make start
 ```
 
+Or running with live reload:
+
+```bash
+air
+```
+
+> [!NOTE]
+> Make sure you have `Air` installed.\
+> See 👉 [How to install Air](https://github.com/air-verse/air)
+
 Testing:
 
 ```bash
