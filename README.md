@@ -360,7 +360,8 @@ To modify the golangci-lint configuration, update the `.golangci.yml` file.
 
 ## How to Contribute
 
-Make a pull request...
+Make a pull request...\
+Please check out the [contributing guide](CONTRIBUTING.md).
 
 ## Inspirations
 
