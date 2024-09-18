@@ -192,7 +192,12 @@ src\
 
 ## API Documentation
 
-To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser. This documentation page is automatically generated using the [Swag](https://github.com/swaggo/swag) definitions written as comments in the controller files.
+To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser. 
+
+![Auth](https://github.com/user-attachments/assets/da2e05d8-5aba-4750-abda-0688ce0afe73)
+![User](https://github.com/user-attachments/assets/58ed8b23-5517-4bce-94bc-2dc5b2d7b875)
+
+This documentation page is automatically generated using the [Swag](https://github.com/swaggo/swag) definitions written as comments in the controller files.
 
 See 👉 [Declarative Comments Format.](https://github.com/swaggo/swag#declarative-comments-format)
 
