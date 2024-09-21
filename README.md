@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Repository size](https://img.shields.io/github/repo-size/indrayyana/go-fiber-boilerplate?color=56BEB8)
+![Linter](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Linter/badge.svg)
 
 A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
 `Inspired by the Express boilerplate.`
