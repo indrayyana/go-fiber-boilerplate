@@ -103,7 +103,7 @@ make tests
 make testsum
 
 # run test for the selected function name
-make tests-TestAuthRoutes
+make tests-TestUserModel
 ```
 
 Docker:
