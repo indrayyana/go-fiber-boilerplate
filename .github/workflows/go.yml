@@ -10,7 +10,7 @@ env:
   APP_ENV: dev
   APP_HOST: 0.0.0.0
   APP_PORT: 3000
-  DB_HOST: postgresdb
+  DB_HOST: localhost
   DB_USER: postgres
   DB_PASSWORD: thisisasamplepassword
   DB_NAME: fiberdb
@@ -45,7 +45,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h postgresdb -U postgres -d fiberdb; do
+          until pg_isready -h localhost -U postgres -d fiberdb; do
             echo "Waiting for PostgreSQL..."
             sleep 5
           done
