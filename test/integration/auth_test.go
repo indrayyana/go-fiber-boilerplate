@@ -37,8 +37,8 @@ func TestAuthRoutes(t *testing.T) {
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 
-			apiResponse, err := test.App.Test(request)
-
+			msTimeout := 2000
+			apiResponse, err := test.App.Test(request, msTimeout)
 			assert.Nil(t, err)
 
 			bytes, err := io.ReadAll(apiResponse.Body)
@@ -436,29 +436,18 @@ func TestAuthRoutes(t *testing.T) {
 				Email: fixture.UserOne.Email,
 			}
 
-			bodyJSON, errJSON := json.Marshal(requestBody)
-			assert.Nil(t, errJSON)
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
 
 			request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", strings.NewReader(string(bodyJSON)))
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 
-			// Send request with timeout
-			res := httptest.NewRecorder()
-			ch := make(chan error, 1)
-			go func() {
-				_, err := test.App.Test(request, -1)
-				ch <- err
-			}()
+			msTimeout := 10000
+			apiResponse, err := test.App.Test(request, msTimeout)
+			assert.Nil(t, err)
 
-			select {
-			case err := <-ch:
-				assert.Nil(t, err, "Error occurred during request")
-			case <-time.After(10 * time.Second):
-				t.Fatal("Request timed out")
-			}
-
-			assert.Equal(t, http.StatusOK, res.Code)
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 
 			dbVerifyEmailTokenDoc, _ := helper.GetTokenByType(test.DB, fixture.UserOne.ID.String(), config.TokenTypeResetPassword)
 			assert.NotNil(t, dbVerifyEmailTokenDoc)
@@ -644,30 +633,19 @@ func TestAuthRoutes(t *testing.T) {
 			helper.ClearAll(test.DB)
 			helper.InsertUser(test.DB, fixture.UserOne)
 
-			userOneAccessToken, errGenToken := fixture.AccessToken(fixture.UserOne)
-			assert.Nil(t, errGenToken)
+			userOneAccessToken, err := fixture.AccessToken(fixture.UserOne)
+			assert.Nil(t, err)
 
 			request := httptest.NewRequest(http.MethodPost, "/v1/auth/send-verification-email", nil)
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 			request.Header.Set("Authorization", "Bearer "+userOneAccessToken)
 
-			// Send request with timeout
-			res := httptest.NewRecorder()
-			ch := make(chan error, 1)
-			go func() {
-				_, err := test.App.Test(request, -1)
-				ch <- err
-			}()
+			msTimeout := 10000
+			apiResponse, err := test.App.Test(request, msTimeout)
+			assert.Nil(t, err)
 
-			select {
-			case err := <-ch:
-				assert.Nil(t, err, "Error occurred during request")
-			case <-time.After(10 * time.Second):
-				t.Fatal("Request timed out")
-			}
-
-			assert.Equal(t, http.StatusOK, res.Code)
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 
 			dbVerifyEmailTokenDoc, _ := helper.GetTokenByType(test.DB, fixture.UserOne.ID.String(), config.TokenTypeVerifyEmail)
 			assert.NotNil(t, dbVerifyEmailTokenDoc)
