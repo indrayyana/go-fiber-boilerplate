@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v4
+
       - name: Run Golint
         uses: reviewdog/action-golangci-lint@v2
         with:
