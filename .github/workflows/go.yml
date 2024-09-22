@@ -24,13 +24,13 @@ jobs:
       postgresdb:
         image: postgres:alpine
         env:
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: thisisasamplepassword
+          POSTGRES_DB: fiberdb
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U ${{ env.DB_USER }}"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 20s
           --health-retries 10
@@ -45,7 +45,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }}; do
+          until pg_isready -h postgresdb -U postgres -d fiberdb; do
             echo "Waiting for PostgreSQL..."
             sleep 5
           done
