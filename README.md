@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Repository size](https://img.shields.io/github/repo-size/indrayyana/go-fiber-boilerplate?color=56BEB8)
+![Build](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Build/badge.svg)
 ![Test](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Test/badge.svg)
 ![Linter](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Linter/badge.svg)
 
