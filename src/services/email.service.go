@@ -50,7 +50,7 @@ func (s *emailService) SendEmail(to string, subject string, body string) error {
 func (s *emailService) SendResetPasswordEmail(to string, token string) error {
 	subject := "Reset password"
 
-	// replace this url with the link to the reset password page of your front-end app
+	// TODO: replace this url with the link to the reset password page of your front-end app
 	resetPasswordURL := fmt.Sprintf("http://link-to-app/reset-password?token=%s", token)
 	body := fmt.Sprintf(`Dear user,
 
@@ -63,7 +63,7 @@ If you did not request any password resets, then ignore this email.`, resetPassw
 func (s *emailService) SendVerificationEmail(to string, token string) error {
 	subject := "Email Verification"
 
-	// replace this url with the link to the email verification page of your front-end app
+	// TODO: replace this url with the link to the email verification page of your front-end app
 	verificationEmailURL := fmt.Sprintf("http://link-to-app/verify-email?token=%s", token)
 	body := fmt.Sprintf(`Dear user,
 
