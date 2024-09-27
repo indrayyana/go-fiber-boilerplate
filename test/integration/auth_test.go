@@ -37,8 +37,8 @@ func TestAuthRoutes(t *testing.T) {
 			request.Header.Set("Content-Type", "application/json")
 			request.Header.Set("Accept", "application/json")
 
-			apiResponse, err := test.App.Test(request)
-
+			msTimeout := 2000
+			apiResponse, err := test.App.Test(request, msTimeout)
 			assert.Nil(t, err)
 
 			bytes, err := io.ReadAll(apiResponse.Body)
@@ -428,27 +428,30 @@ func TestAuthRoutes(t *testing.T) {
 		})
 	})
 	t.Run("POST /v1/auth/forgot-password", func(t *testing.T) {
-		// TODO: not finished yet
-		// t.Run("should return 200 and send reset password email to the user", func(t *testing.T) {
-		// 	helper.ClearAll(test.DB)
-		// 	helper.InsertUser(test.DB, fixture.UserOne)
+		t.Run("should return 200 and send reset password email to the user", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
 
-		// 	requestBody := validation.ForgotPassword{
-		// 		Email: fixture.UserOne.Email,
-		// 	}
+			requestBody := validation.ForgotPassword{
+				Email: fixture.UserOne.Email,
+			}
 
-		// 	bodyJSON, err := json.Marshal(requestBody)
-		// 	assert.Nil(t, err)
+			bodyJSON, err := json.Marshal(requestBody)
+			assert.Nil(t, err)
 
-		// 	request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", strings.NewReader(string(bodyJSON)))
-		// 	request.Header.Set("Content-Type", "application/json")
-		// 	request.Header.Set("Accept", "application/json")
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/forgot-password", strings.NewReader(string(bodyJSON)))
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
 
-		// 	apiResponse, err := test.App.Test(request)
-		// 	assert.Nil(t, err)
+			msTimeout := 10000
+			apiResponse, err := test.App.Test(request, msTimeout)
+			assert.Nil(t, err)
 
-		// 	assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
-		// })
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+
+			dbVerifyEmailTokenDoc, _ := helper.GetTokenByType(test.DB, fixture.UserOne.ID.String(), config.TokenTypeResetPassword)
+			assert.NotNil(t, dbVerifyEmailTokenDoc)
+		})
 
 		t.Run("should return 400 if email is missing", func(t *testing.T) {
 			helper.ClearAll(test.DB)
@@ -626,27 +629,27 @@ func TestAuthRoutes(t *testing.T) {
 		})
 	})
 	t.Run("POST /v1/auth/send-verification-email", func(t *testing.T) {
-		// TODO: not finished yet
-		// t.Run("should return 200 and send verification email to the user", func(t *testing.T) {
-		// 	helper.ClearAll(test.DB)
-		// 	helper.InsertUser(test.DB, fixture.UserOne)
+		t.Run("should return 200 and send verification email to the user", func(t *testing.T) {
+			helper.ClearAll(test.DB)
+			helper.InsertUser(test.DB, fixture.UserOne)
 
-		// 	verifyEmailToken, err := fixture.VerifyEmailToken(fixture.UserOne)
-		// 	assert.Nil(t, err)
+			userOneAccessToken, err := fixture.AccessToken(fixture.UserOne)
+			assert.Nil(t, err)
 
-		// 	request := httptest.NewRequest(http.MethodPost, "/v1/auth/send-verification-email", nil)
-		// 	request.Header.Set("Content-Type", "application/json")
-		// 	request.Header.Set("Accept", "application/json")
-		// 	request.Header.Set("Authorization", "Bearer "+verifyEmailToken)
+			request := httptest.NewRequest(http.MethodPost, "/v1/auth/send-verification-email", nil)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Accept", "application/json")
+			request.Header.Set("Authorization", "Bearer "+userOneAccessToken)
 
-		// 	apiResponse, err := test.App.Test(request)
-		// 	assert.Nil(t, err)
+			msTimeout := 10000
+			apiResponse, err := test.App.Test(request, msTimeout)
+			assert.Nil(t, err)
 
-		// 	assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
+			assert.Equal(t, http.StatusOK, apiResponse.StatusCode)
 
-		// 	dbVerifyEmailTokenDoc, _ := helper.GetTokenByUserID(test.DB, verifyEmailToken)
-		// 	assert.NotNil(t, dbVerifyEmailTokenDoc)
-		// })
+			dbVerifyEmailTokenDoc, _ := helper.GetTokenByType(test.DB, fixture.UserOne.ID.String(), config.TokenTypeVerifyEmail)
+			assert.NotNil(t, dbVerifyEmailTokenDoc)
+		})
 
 		t.Run("should return 401 error if access token is missing", func(t *testing.T) {
 			helper.ClearAll(test.DB)

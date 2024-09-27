@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  APP_ENV: dev
+  APP_HOST: 0.0.0.0
+  APP_PORT: 3000
+  DB_HOST: localhost
+  DB_USER: postgres
+  DB_PASSWORD: thisisasamplepassword
+  DB_NAME: fiberdb
+  DB_PORT: 5432
+
+jobs:
+  GoFiber:
+    runs-on: ubuntu-latest
+
+    services:
+      postgresdb:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: thisisasamplepassword
+          POSTGRES_DB: fiberdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 20s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -U postgres -d fiberdb; do
+            echo "Waiting for PostgreSQL..."
+            sleep 5
+          done
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Build Go application
+        run: CGO_ENABLED=0 GOOS=linux go build src/main.go
+        env:
+          APP_ENV: ${{ env.APP_ENV }}
+          APP_HOST: ${{ env.APP_HOST }}
+          APP_PORT: ${{ env.APP_PORT }}
+          DB_HOST: ${{ env.DB_HOST }}
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_NAME: ${{ env.DB_NAME }}
+          DB_PORT: ${{ env.DB_PORT }}

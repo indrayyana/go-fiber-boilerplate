@@ -138,6 +138,18 @@ func GetTokenByUserID(db *gorm.DB, tokenStr string) (*model.Token, error) {
 	return tokenDoc, nil
 }
 
+func GetTokenByType(db *gorm.DB, userID string, tokenType string) (*model.Token, error) {
+	tokenDoc := new(model.Token)
+	result := db.Where("type = ? AND user_id = ?", tokenType, userID).
+		First(tokenDoc)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return tokenDoc, nil
+}
+
 func GetUserByID(db *gorm.DB, id string) (*model.User, error) {
 	user := new(model.User)
 

@@ -1,9 +1,13 @@
 # RESTful API Go Fiber Boilerplate
 
 ![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/indrayyana/go-fiber-boilerplate)](https://goreportcard.com/report/github.com/indrayyana/go-fiber-boilerplate)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Repository size](https://img.shields.io/github/repo-size/indrayyana/go-fiber-boilerplate?color=56BEB8)
-![License](https://img.shields.io/dub/l/vibe-d.svg)
+![Build](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Build/badge.svg)
+![Test](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Test/badge.svg)
+![Linter](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Linter/badge.svg)
 
 A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
 `Inspired by the Express boilerplate.`
@@ -57,7 +61,7 @@ cp .env.example .env
 - [Authorization](#authorization)
 - [Logging](#logging)
 - [Linting](#linting)
-- [How to Contribute](#how-to-contribute)
+- [Contributing](#contributing)
 
 ## Features
 
@@ -102,7 +106,7 @@ make tests
 make testsum
 
 # run test for the selected function name
-make tests-TestAuthRoutes
+make tests-TestUserModel
 ```
 
 Docker:
@@ -192,7 +196,7 @@ src\
 
 ## API Documentation
 
-To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser. 
+To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser.
 
 ![Auth](https://github.com/user-attachments/assets/da2e05d8-5aba-4750-abda-0688ce0afe73)
 ![User](https://github.com/user-attachments/assets/58ed8b23-5517-4bce-94bc-2dc5b2d7b875)
@@ -363,10 +367,11 @@ See 👉 [How to install golangci-lint](https://golangci-lint.run/welcome/instal
 
 To modify the golangci-lint configuration, update the `.golangci.yml` file.
 
-## How to Contribute
+## Contributing
 
-Make a pull request...\
-Please check out the [contributing guide](CONTRIBUTING.md).
+Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
+
+If you find this boilerplate useful, consider giving it a star! ⭐
 
 ## Inspirations
 

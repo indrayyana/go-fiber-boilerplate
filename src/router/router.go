@@ -21,7 +21,7 @@ func Routes(app *fiber.App, db *gorm.DB) {
 
 	AuthRoutes(v1, authService, userService, tokenService, emailService)
 	UserRoutes(v1, userService, tokenService)
-	// add another routes here...
+	// TODO: add another routes here...
 
 	if !config.IsProd {
 		DocsRoutes(v1)
