@@ -10,36 +10,36 @@ import (
 )
 
 type EmailService interface {
-	SendEmail(to string, subject string, body string) error
-	SendResetPasswordEmail(to string, token string) error
-	SendVerificationEmail(to string, token string) error
+	SendEmail(to, subject, body string) error
+	SendResetPasswordEmail(to, token string) error
+	SendVerificationEmail(to, token string) error
 }
 
 type emailService struct {
-	Log *logrus.Logger
+	Log    *logrus.Logger
+	Dialer *gomail.Dialer
 }
 
 func NewEmailService() EmailService {
 	return &emailService{
 		Log: utils.Log,
+		Dialer: gomail.NewDialer(
+			config.SMTPHost,
+			config.SMTPPort,
+			config.SMTPUsername,
+			config.SMTPPassword,
+		),
 	}
 }
 
-func (s *emailService) SendEmail(to string, subject string, body string) error {
+func (s *emailService) SendEmail(to, subject, body string) error {
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", to)
 	mailer.SetHeader("Subject", subject)
 	mailer.SetBody("text/plain", body)
 
-	dialer := gomail.NewDialer(
-		config.SMTPHost,
-		config.SMTPPort,
-		config.SMTPUsername,
-		config.SMTPPassword,
-	)
-
-	if err := dialer.DialAndSend(mailer); err != nil {
+	if err := s.Dialer.DialAndSend(mailer); err != nil {
 		s.Log.Errorf("Failed to send email: %v", err)
 		return err
 	}
@@ -47,7 +47,7 @@ func (s *emailService) SendEmail(to string, subject string, body string) error {
 	return nil
 }
 
-func (s *emailService) SendResetPasswordEmail(to string, token string) error {
+func (s *emailService) SendResetPasswordEmail(to, token string) error {
 	subject := "Reset password"
 
 	// TODO: replace this url with the link to the reset password page of your front-end app
@@ -60,7 +60,7 @@ If you did not request any password resets, then ignore this email.`, resetPassw
 	return s.SendEmail(to, subject, body)
 }
 
-func (s *emailService) SendVerificationEmail(to string, token string) error {
+func (s *emailService) SendVerificationEmail(to, token string) error {
 	subject := "Email Verification"
 
 	// TODO: replace this url with the link to the email verification page of your front-end app
