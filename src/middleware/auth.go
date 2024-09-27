@@ -12,7 +12,7 @@ import (
 func Auth(userService services.UserService, requiredRights ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
-		token := strings.TrimSpace(strings.Replace(authHeader, "Bearer", "", 1))
+		token := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
 
 		if token == "" {
 			return fiber.NewError(fiber.StatusUnauthorized, "Please authenticate")
@@ -41,20 +41,16 @@ func Auth(userService services.UserService, requiredRights ...string) fiber.Hand
 	}
 }
 
-func hasAllRights(userRights []string, requiredRights []string) bool {
+func hasAllRights(userRights, requiredRights []string) bool {
+	rightSet := make(map[string]struct{}, len(userRights))
+	for _, right := range userRights {
+		rightSet[right] = struct{}{}
+	}
+
 	for _, right := range requiredRights {
-		if !contains(userRights, right) {
+		if _, exists := rightSet[right]; !exists {
 			return false
 		}
 	}
 	return true
-}
-
-func contains(slice []string, item string) bool {
-	for _, v := range slice {
-		if v == item {
-			return true
-		}
-	}
-	return false
 }
