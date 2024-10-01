@@ -17,6 +17,7 @@ var DB *gorm.DB
 var Log = utils.Log
 
 func init() {
+	// TODO: You can modify host and database configuration for tests
 	DB = database.Connect("localhost", "testdb")
 	router.Routes(App, DB)
 	App.Use(utils.NotFoundHandler)
