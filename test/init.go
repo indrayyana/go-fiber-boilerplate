@@ -18,7 +18,6 @@ var Log = utils.Log
 
 func init() {
 	DB = database.Connect("localhost", "testdb")
-	database.Migrate(DB)
 	router.Routes(App, DB)
 	App.Use(utils.NotFoundHandler)
 }
