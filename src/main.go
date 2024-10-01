@@ -28,7 +28,6 @@ func main() {
 	app := fiber.New(config.FiberConfig())
 
 	db := database.Connect(config.DBHost, config.DBName)
-	database.Migrate(db)
 
 	// limit repeated failed requests to auth endpoints
 	app.Use("/v1/auth", middleware.LimiterConfig())
