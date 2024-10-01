@@ -77,6 +77,7 @@ cp .env.example .env
 - **Compression**: gzip compression with [Fiber-Compress](https://docs.gofiber.io/api/middleware/compress)
 - **Docker support**
 - **Linting**: with [golangci-lint](https://golangci-lint.run)
+- **Migrations**: with [golang-migrate](https://github.com/golang-migrate/migrate)
 
 ## Commands
 
@@ -131,6 +132,22 @@ Swagger:
 ```bash
 # generate the swagger documentation
 make swagger
+```
+
+Migration:
+
+```bash
+# run migration up in local
+make migrate-up
+
+# run migration down in local
+make migrate-down
+
+# run migration up in docker container
+make migrate-docker-up
+
+# run migration down all in docker container
+make migrate-docker-down-all
 ```
 
 ## Environment Variables
