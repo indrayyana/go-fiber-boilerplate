@@ -12,7 +12,7 @@
 A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
 `Inspired by the Express boilerplate.`
 
-The app comes with many built-in features, such as authentication using JWT and Google OAuth2, request validation, integration tests, docker support, API documentation, pagination, etc. For more details, check the features list below.
+The app comes with many built-in features, such as authentication using JWT and Google OAuth2, request validation, unit and integration tests, docker support, API documentation, pagination, etc. For more details, check the features list below.
 
 ## Quick Start
 
