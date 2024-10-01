@@ -354,4 +354,10 @@ func (a *AuthController) GoogleCallback(c *fiber.Ctx) error {
 			User:    *user,
 			Tokens:  *tokens,
 		})
+
+	// TODO: replace this url with the link to the oauth google success page of your front-end app
+	// googleLoginURL := fmt.Sprintf("http://link-to-app/google/success?access_token=%s&refresh_token=%s",
+	// 	tokens.Access.Token, tokens.Refresh.Token)
+
+	// return c.Status(fiber.StatusSeeOther).Redirect(googleLoginURL)
 }
