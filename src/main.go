@@ -78,11 +78,12 @@ func startServer(app *fiber.App, address string, errs chan<- error) {
 }
 
 func closeDatabase(db *gorm.DB) {
-	sqlDB, err := db.DB()
-	if err != nil {
-		utils.Log.Errorf("Error getting database instance: %v", err)
+	sqlDB, errDB := db.DB()
+	if errDB != nil {
+		utils.Log.Errorf("Error getting database instance: %v", errDB)
 		return
 	}
+
 	if err := sqlDB.Close(); err != nil {
 		utils.Log.Errorf("Error closing database connection: %v", err)
 	} else {
