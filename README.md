@@ -66,6 +66,7 @@ cp .env.example .env
 ## Features
 
 - **SQL database**: [PostgreSQL](https://www.postgresql.org) Object Relation Mapping using [Gorm](https://gorm.io)
+- **Database migrations**: with [golang-migrate](https://github.com/golang-migrate/migrate)
 - **Validation**: request data validation using [Package validator](https://github.com/go-playground/validator)
 - **Logging**: using [Logrus](https://github.com/sirupsen/logrus) and [Fiber-Logger](https://docs.gofiber.io/api/middleware/logger)
 - **Testing**: integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
@@ -77,7 +78,6 @@ cp .env.example .env
 - **Compression**: gzip compression with [Fiber-Compress](https://docs.gofiber.io/api/middleware/compress)
 - **Docker support**
 - **Linting**: with [golangci-lint](https://golangci-lint.run)
-- **Migrations**: with [golang-migrate](https://github.com/golang-migrate/migrate)
 
 ## Commands
 
@@ -137,6 +137,14 @@ make swagger
 Migration:
 
 ```bash
+# Create migration
+make migration-<table-name>
+
+# Example for table users
+make migration-users
+```
+
+```bash
 # run migration up in local
 make migrate-up
 
@@ -147,7 +155,7 @@ make migrate-down
 make migrate-docker-up
 
 # run migration down all in docker container
-make migrate-docker-down-all
+make migrate-docker-down
 ```
 
 ## Environment Variables
@@ -199,7 +207,7 @@ REDIRECT_URL=http://localhost:3000/v1/auth/google-callback
 src\
  |--config\         # Environment variables and configuration related things
  |--controllers\    # Route controllers (controller layer)
- |--database\       # Database connection & migration
+ |--database\       # Database connection & migrations
  |--docs\           # Swagger files
  |--middleware\     # Custom fiber middlewares
  |--model\          # Postgres models (data layer)
@@ -399,3 +407,7 @@ If you find this boilerplate useful, consider giving it a star! ⭐
 ## License
 
 [MIT](LICENSE)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
