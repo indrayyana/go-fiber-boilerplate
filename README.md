@@ -176,6 +176,9 @@ DB_PASSWORD=thisisasamplepassword
 DB_NAME=fiberdb
 DB_PORT=5432
 
+# golang-migrate path
+MIGRATION_PATH=~/migrate
+
 # JWT
 # JWT secret key
 JWT_SECRET=thisisasamplesecret
