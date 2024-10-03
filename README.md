@@ -69,7 +69,7 @@ cp .env.example .env
 - **Database migrations**: with [golang-migrate](https://github.com/golang-migrate/migrate)
 - **Validation**: request data validation using [Package validator](https://github.com/go-playground/validator)
 - **Logging**: using [Logrus](https://github.com/sirupsen/logrus) and [Fiber-Logger](https://docs.gofiber.io/api/middleware/logger)
-- **Testing**: integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
+- **Testing**: unit and integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with [Swag](https://github.com/swaggo/swag) and [Swagger](https://github.com/gofiber/swagger)
 - **Environment variables**: using [Viper](https://github.com/spf13/viper)
@@ -223,8 +223,8 @@ src\
 
 To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser.
 
-![Auth](https://github.com/user-attachments/assets/da2e05d8-5aba-4750-abda-0688ce0afe73)
-![User](https://github.com/user-attachments/assets/58ed8b23-5517-4bce-94bc-2dc5b2d7b875)
+![Auth](https://indrayyana.github.io/assets/images/swagger1.png)
+![User](https://indrayyana.github.io/assets/images/swagger2.png)
 
 This documentation page is automatically generated using the [Swag](https://github.com/swaggo/swag) definitions written as comments in the controller files.
 
@@ -410,4 +410,17 @@ If you find this boilerplate useful, consider giving it a star! ⭐
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
+<div>
+  <a href="https://github.com/indrayyana">
+    <img src="https://github.com/indrayyana.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
+  </a>
+  <a href="https://github.com/dekandika">
+    <img src="https://github.com/dekandika.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
+  </a>
+  <a href="https://github.com/AnantaWeda">
+    <img src="https://github.com/AnantaWeda.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
+  </a>
+  <a href="https://github.com/tommynurwantoro">
+    <img src="https://github.com/tommynurwantoro.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
+  </a>
+</div>
