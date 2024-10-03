@@ -410,17 +410,4 @@ If you find this boilerplate useful, consider giving it a star! ⭐
 
 ## Contributors
 
-<div>
-  <a href="https://github.com/indrayyana">
-    <img src="https://github.com/indrayyana.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
-  </a>
-  <a href="https://github.com/dekandika">
-    <img src="https://github.com/dekandika.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
-  </a>
-  <a href="https://github.com/AnantaWeda">
-    <img src="https://github.com/AnantaWeda.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
-  </a>
-  <a href="https://github.com/tommynurwantoro">
-    <img src="https://github.com/tommynurwantoro.png" alt="Profile" width="70" height="70" style="border-radius: 50%;">
-  </a>
-</div>
+[![Contributors](https://contrib.rocks/image?c=0&repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
