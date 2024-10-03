@@ -137,6 +137,14 @@ make swagger
 Migration:
 
 ```bash
+# Create migration
+make migration-<table-name>
+
+# Example for table users
+make migration-users
+```
+
+```bash
 # run migration up in local
 make migrate-up
 
@@ -147,7 +155,7 @@ make migrate-down
 make migrate-docker-up
 
 # run migration down all in docker container
-make migrate-docker-down-all
+make migrate-docker-down
 ```
 
 ## Environment Variables
@@ -167,9 +175,6 @@ DB_USER=postgres
 DB_PASSWORD=thisisasamplepassword
 DB_NAME=fiberdb
 DB_PORT=5432
-
-# golang-migrate path
-MIGRATION_PATH=~/migrate
 
 # JWT
 # JWT secret key

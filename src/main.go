@@ -31,7 +31,7 @@ import (
 // @description Example Value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // Ensure cancel is called when main exits
+	defer cancel()
 
 	app := setupFiberApp()
 	db := setupDatabase()
