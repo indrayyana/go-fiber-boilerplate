@@ -9,8 +9,7 @@
 ![Test](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Test/badge.svg)
 ![Linter](https://github.com/indrayyana/go-fiber-boilerplate/workflows/Linter/badge.svg)
 
-A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL.\
-`Inspired by the Express boilerplate.`
+A boilerplate/starter project for quickly building RESTful APIs using Go, Fiber, and PostgreSQL. Inspired by the Express boilerplate.
 
 The app comes with many built-in features, such as authentication using JWT and Google OAuth2, request validation, unit and integration tests, docker support, API documentation, pagination, etc. For more details, check the features list below.
 
@@ -72,6 +71,7 @@ cp .env.example .env
 - **Testing**: unit and integration tests using [Testify](https://github.com/stretchr/testify) and formatted test output using [gotestsum](https://github.com/gotestyourself/gotestsum)
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with [Swag](https://github.com/swaggo/swag) and [Swagger](https://github.com/gofiber/swagger)
+- **Sending email**: using [Gomail](https://github.com/go-gomail/gomail)
 - **Environment variables**: using [Viper](https://github.com/spf13/viper)
 - **Security**: set security HTTP headers using [Fiber-Helmet](https://docs.gofiber.io/api/middleware/helmet)
 - **CORS**: Cross-Origin Resource-Sharing enabled using [Fiber-CORS](https://docs.gofiber.io/api/middleware/cors)
@@ -206,14 +206,14 @@ REDIRECT_URL=http://localhost:3000/v1/auth/google-callback
 ```
 src\
  |--config\         # Environment variables and configuration related things
- |--controllers\    # Route controllers (controller layer)
+ |--controller\     # Route controllers (controller layer)
  |--database\       # Database connection & migrations
  |--docs\           # Swagger files
  |--middleware\     # Custom fiber middlewares
  |--model\          # Postgres models (data layer)
  |--response\       # Response models
  |--router\         # Routes
- |--services\       # Business logic (service layer)
+ |--service\        # Business logic (service layer)
  |--utils\          # Utility classes and functions
  |--validation\     # Request data validation schemas
  |--main.go         # Fiber app

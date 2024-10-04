@@ -1,9 +1,9 @@
-package controllers
+package controller
 
 import (
 	"app/src/model"
 	"app/src/response"
-	"app/src/services"
+	"app/src/service"
 	"app/src/validation"
 	"math"
 
@@ -12,11 +12,11 @@ import (
 )
 
 type UserController struct {
-	UserService  services.UserService
-	TokenService services.TokenService
+	UserService  service.UserService
+	TokenService service.TokenService
 }
 
-func NewUserController(userService services.UserService, tokenService services.TokenService) *UserController {
+func NewUserController(userService service.UserService, tokenService service.TokenService) *UserController {
 	return &UserController{
 		UserService:  userService,
 		TokenService: tokenService,

@@ -2,7 +2,7 @@ package router
 
 import (
 	"app/src/config"
-	"app/src/services"
+	"app/src/service"
 	"app/src/validation"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,10 +12,10 @@ import (
 func Routes(app *fiber.App, db *gorm.DB) {
 	validate := validation.Validator()
 
-	emailService := services.NewEmailService()
-	userService := services.NewUserService(db, validate)
-	tokenService := services.NewTokenService(db, validate, userService)
-	authService := services.NewAuthService(db, validate, userService, tokenService)
+	emailService := service.NewEmailService()
+	userService := service.NewUserService(db, validate)
+	tokenService := service.NewTokenService(db, validate, userService)
+	authService := service.NewAuthService(db, validate, userService, tokenService)
 
 	v1 := app.Group("/v1")
 

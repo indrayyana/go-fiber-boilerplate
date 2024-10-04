@@ -1,15 +1,15 @@
 package router
 
 import (
-	"app/src/controllers"
+	"app/src/controller"
 	m "app/src/middleware"
-	"app/src/services"
+	"app/src/service"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func UserRoutes(v1 fiber.Router, u services.UserService, t services.TokenService) {
-	userController := controllers.NewUserController(u, t)
+func UserRoutes(v1 fiber.Router, u service.UserService, t service.TokenService) {
+	userController := controller.NewUserController(u, t)
 
 	user := v1.Group("/users")
 

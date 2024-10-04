@@ -2,18 +2,18 @@ package router
 
 import (
 	"app/src/config"
-	"app/src/controllers"
+	"app/src/controller"
 	m "app/src/middleware"
-	"app/src/services"
+	"app/src/service"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func AuthRoutes(
-	v1 fiber.Router, a services.AuthService, u services.UserService,
-	t services.TokenService, e services.EmailService,
+	v1 fiber.Router, a service.AuthService, u service.UserService,
+	t service.TokenService, e service.EmailService,
 ) {
-	authController := controllers.NewAuthController(a, u, t, e)
+	authController := controller.NewAuthController(a, u, t, e)
 	config.GoogleConfig()
 
 	auth := v1.Group("/auth")

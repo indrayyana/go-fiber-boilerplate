@@ -1,10 +1,10 @@
-package controllers
+package controller
 
 import (
 	"app/src/config"
 	"app/src/model"
 	"app/src/response"
-	"app/src/services"
+	"app/src/service"
 	"app/src/validation"
 	"context"
 	"encoding/json"
@@ -16,15 +16,15 @@ import (
 )
 
 type AuthController struct {
-	AuthService  services.AuthService
-	UserService  services.UserService
-	TokenService services.TokenService
-	EmailService services.EmailService
+	AuthService  service.AuthService
+	UserService  service.UserService
+	TokenService service.TokenService
+	EmailService service.EmailService
 }
 
 func NewAuthController(
-	authService services.AuthService, userService services.UserService,
-	tokenService services.TokenService, emailService services.EmailService,
+	authService service.AuthService, userService service.UserService,
+	tokenService service.TokenService, emailService service.EmailService,
 ) *AuthController {
 	return &AuthController{
 		AuthService:  authService,
