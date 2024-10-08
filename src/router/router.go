@@ -10,6 +10,7 @@ import (
 )
 
 func Routes(app *fiber.App, db *gorm.DB) {
+	MetricsRoutes(app)
 	validate := validation.Validator()
 
 	emailService := service.NewEmailService()
@@ -21,9 +22,11 @@ func Routes(app *fiber.App, db *gorm.DB) {
 
 	AuthRoutes(v1, authService, userService, tokenService, emailService)
 	UserRoutes(v1, userService, tokenService)
+	HealthRoutes(v1, db)
 	// TODO: add another routes here...
 
 	if !config.IsProd {
 		DocsRoutes(v1)
+
 	}
 }

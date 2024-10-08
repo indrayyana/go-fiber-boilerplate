@@ -1,0 +1,194 @@
+{
+  "id": 1,
+  "uid": "fiber-api-monitoring",
+  "title": "Fiber API Monitoring Dashboard",
+  "description": "Monitoring Golang Fiber APIs using Prometheus metrics",
+  "version": 1,
+  "schemaVersion": 37,
+  "refresh": "5s",
+  "style": "dark",
+  "timezone": "browser",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Total HTTP Requests",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[5m]))",
+          "legendFormat": "Total Requests",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 50 },
+              { "color": "red", "value": 100 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 9 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Request Rate by Endpoint",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{handler}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 9 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Response Time",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",
+          "legendFormat": "Response Time (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        }
+      },
+      "gridPos": { "x": 0, "y": 9, "w": 12, "h": 9 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status=~'4..'}[5m]))",
+          "legendFormat": "4xx Errors",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(rate(http_requests_total{status=~'5..'}[5m]))",
+          "legendFormat": "5xx Errors",
+          "refId": "E"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "orange", "value": 10 },
+              { "color": "red", "value": 20 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "x": 12, "y": 9, "w": 12, "h": 9 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage (Heap Alloc)",
+      "targets": [
+        {
+          "expr": "go_memstats_heap_alloc_bytes",
+          "legendFormat": "Heap Alloc",
+          "refId": "F"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        }
+      },
+      "gridPos": { "x": 0, "y": 18, "w": 12, "h": 9 }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Usage",
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total[5m])",
+          "legendFormat": "CPU Usage",
+          "refId": "G"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "gridPos": { "x": 12, "y": 18, "w": 12, "h": 9 }
+    },
+    {
+      "type": "table",
+      "title": "Latency by Endpoint",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, handler))",
+          "legendFormat": "{{handler}}",
+          "refId": "H"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      },
+      "gridPos": { "x": 0, "y": 27, "w": 12, "h": 9 }
+    },
+    {
+      "type": "piechart",
+      "title": "Requests by HTTP Method",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[5m])) by (method)",
+          "legendFormat": "{{method}}",
+          "refId": "I"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      },
+      "gridPos": { "x": 12, "y": 27, "w": 12, "h": 9 }
+    }
+  ],
+  "templating": {
+    "list": []
+  }
+}
