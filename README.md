@@ -78,6 +78,7 @@ cp .env.example .env
 - **Compression**: gzip compression with [Fiber-Compress](https://docs.gofiber.io/api/middleware/compress)
 - **Docker support**
 - **Linting**: with [golangci-lint](https://golangci-lint.run)
+- **Monitoring**: system monitoring using [Prometheus](https://github.com/prometheus/prometheus) and [Grafana](https://github.com/grafana/grafana)
 
 ## Commands
 
@@ -199,6 +200,10 @@ EMAIL_FROM=support@yourapp.com
 GOOGLE_CLIENT_ID=yourapps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=thisisasamplesecret
 REDIRECT_URL=http://localhost:3000/v1/auth/google-callback
+
+# grafana configuration
+GF_ADMIN_USER=admin
+GF_ADMIN_PASSWORD=admin123
 ```
 
 ## Project Structure
