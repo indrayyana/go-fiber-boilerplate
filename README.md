@@ -410,4 +410,4 @@ If you find this boilerplate useful, consider giving it a star! ⭐
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?c=0&repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?c=5&repo=indrayyana/go-fiber-boilerplate)](https://github.com/indrayyana/go-fiber-boilerplate/graphs/contributors)
