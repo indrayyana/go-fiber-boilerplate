@@ -10,7 +10,6 @@ import (
 )
 
 func Routes(app *fiber.App, db *gorm.DB) {
-	MetricsRoutes(app)
 	validate := validation.Validator()
 
 	emailService := service.NewEmailService()
