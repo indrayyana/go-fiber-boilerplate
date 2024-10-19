@@ -34,6 +34,14 @@ func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthC
 }
 
 // Check handles the health check endpoint
+// @Summary Health Check
+// @Description Check the status of services and database connections
+// @Tags Health
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.HealthCheckResponse
+// @Failure 500 {object} response.HealthCheckResponse
+// @Router /health [get]
 func (h *HealthCheckController) Check(c *fiber.Ctx) error {
 	var isHealthy bool = true
 	var serviceList []response.HealthCheck
