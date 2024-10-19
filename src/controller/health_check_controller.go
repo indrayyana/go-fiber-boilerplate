@@ -21,7 +21,7 @@ func NewHealthCheckController(
 }
 
 // addServiceStatus adds the service status to the health check response list
-func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthCheck, name string, isUp bool) {
+func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthCheck, name string, isUp bool, message *string) {
 	status := "Up"
 	if !isUp {
 		status = "Down"
@@ -30,6 +30,7 @@ func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthC
 		Name:   name,
 		Status: status,
 		IsUp:   isUp,
+		Message: message,
 	})
 }
 
@@ -49,9 +50,10 @@ func (h *HealthCheckController) Check(c *fiber.Ctx) error {
 	// Check the database connection
 	if err := h.HealthCheckService.GormCheck(); err != nil {
 		isHealthy = false
-		h.addServiceStatus(&serviceList, "Postgre", false)
+		errMsg := err.Error()
+		h.addServiceStatus(&serviceList, "Postgre", false, &errMsg)
 	} else {
-		h.addServiceStatus(&serviceList, "Postgre", true)
+		h.addServiceStatus(&serviceList, "Postgre", true, nil)
 	}
 
 	// Return the response based on health check result

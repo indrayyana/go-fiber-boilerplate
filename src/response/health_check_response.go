@@ -1,9 +1,10 @@
 package response
 
 type HealthCheck struct {
-	Name   string `json:"name"`
-	Status string `json:"status"`
-	IsUp   bool   `json:"is_up"`
+	Name    string  `json:"name"`
+	Status  string  `json:"status"`
+	IsUp    bool    `json:"is_up"`
+	Message *string `json:"message"`
 }
 
 type HealthCheckResponse struct {
