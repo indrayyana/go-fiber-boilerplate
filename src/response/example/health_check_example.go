@@ -18,7 +18,7 @@ type HealthCheckError struct {
 	Name    string  `json:"name" example:"Postgre"`
 	Status  string  `json:"status" example:"Down"`
 	IsUp    bool    `json:"is_up" example:"false"`
-	Message *string `json:"message,omitempty" example:"failed to connect to 'host=localhost user=postgres database=wrongdb': server error"`
+	Message *string `json:"message,omitempty" example:"failed to connect to 'host=localhost user=postgres database=wrongdb': server error (FATAL: database \"wrongdb\" does not exist (SQLSTATE 3D000))"`
 }
 
 type HealthCheckResponseError struct {

@@ -193,7 +193,7 @@ definitions:
         type: boolean
       message:
         example: 'failed to connect to ''host=localhost user=postgres database=wrongdb'':
-          server error'
+          server error (FATAL: database "wrongdb" does not exist (SQLSTATE 3D000))'
         type: string
       name:
         example: Postgre
@@ -723,7 +723,7 @@ paths:
       summary: Verify email
       tags:
       - Auth
-  /health:
+  /health-check:
     get:
       consumes:
       - application/json

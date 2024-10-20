@@ -343,7 +343,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/health": {
+        "/health-check": {
             "get": {
                 "description": "Check the status of services and database connections",
                 "consumes": [
@@ -924,7 +924,7 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string",
-                    "example": "failed to connect to 'host=localhost user=postgres database=wrongdb': server error"
+                    "example": "failed to connect to 'host=localhost user=postgres database=wrongdb': server error (FATAL: database \"wrongdb\" does not exist (SQLSTATE 3D000))"
                 },
                 "name": {
                     "type": "string",

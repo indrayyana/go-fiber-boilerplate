@@ -39,7 +39,7 @@ func (h *HealthCheckController) addServiceStatus(
 // @Produce json
 // @Success 200 {object} example.HealthCheckResponse
 // @Failure 500 {object} example.HealthCheckResponseError
-// @Router /health [get]
+// @Router /health-check [get]
 func (h *HealthCheckController) Check(c *fiber.Ctx) error {
 	isHealthy := true
 	var serviceList []response.HealthCheck
