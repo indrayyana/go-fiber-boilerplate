@@ -174,6 +174,72 @@ definitions:
         example: true
         type: boolean
     type: object
+  example.HealthCheck:
+    properties:
+      is_up:
+        example: true
+        type: boolean
+      name:
+        example: Postgre
+        type: string
+      status:
+        example: Up
+        type: string
+    type: object
+  example.HealthCheckError:
+    properties:
+      is_up:
+        example: false
+        type: boolean
+      message:
+        example: 'failed to connect to ''host=localhost user=postgres database=wrongdb'':
+          server error'
+        type: string
+      name:
+        example: Postgre
+        type: string
+      status:
+        example: Down
+        type: string
+    type: object
+  example.HealthCheckResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      is_healthy:
+        example: true
+        type: boolean
+      message:
+        example: Health check completed
+        type: string
+      result:
+        items:
+          $ref: '#/definitions/example.HealthCheck'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  example.HealthCheckResponseError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      is_healthy:
+        example: false
+        type: boolean
+      message:
+        example: Health check completed
+        type: string
+      result:
+        items:
+          $ref: '#/definitions/example.HealthCheckError'
+        type: array
+      status:
+        example: error
+        type: string
+    type: object
   example.LoginResponse:
     properties:
       code:
@@ -657,6 +723,25 @@ paths:
       summary: Verify email
       tags:
       - Auth
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of services and database connections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/example.HealthCheckResponseError'
+      summary: Health Check
+      tags:
+      - Health
   /users:
     get:
       description: Only admins can retrieve all users.

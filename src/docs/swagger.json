@@ -336,6 +336,35 @@
                 }
             }
         },
+        "/health": {
+            "get": {
+                "description": "Check the status of services and database connections",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/example.HealthCheckResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/example.HealthCheckResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -859,6 +888,98 @@
                 "verified_email": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "example.HealthCheck": {
+            "type": "object",
+            "properties": {
+                "is_up": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Postgre"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "Up"
+                }
+            }
+        },
+        "example.HealthCheckError": {
+            "type": "object",
+            "properties": {
+                "is_up": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to connect to 'host=localhost user=postgres database=wrongdb': server error"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Postgre"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "Down"
+                }
+            }
+        },
+        "example.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "is_healthy": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Health check completed"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/example.HealthCheck"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "example.HealthCheckResponseError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "is_healthy": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Health check completed"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/example.HealthCheckError"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "error"
                 }
             }
         },
