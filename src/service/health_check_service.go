@@ -24,12 +24,12 @@ func NewHealthCheckService(db *gorm.DB) HealthCheckService {
 }
 
 func (s *healthCheckService) GormCheck() error {
-	sqlDB, err := s.DB.DB()
-	if err != nil {
-		s.Log.Errorf("failed to access the database connection pool: %v", err)
-		return err
+	sqlDB, errDB := s.DB.DB()
+	if errDB != nil {
+		s.Log.Errorf("failed to access the database connection pool: %v", errDB)
+		return errDB
 	}
-	
+
 	if err := sqlDB.Ping(); err != nil {
 		s.Log.Errorf("failed to ping the database: %v", err)
 		return err

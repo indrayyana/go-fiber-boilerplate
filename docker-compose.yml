@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   adminer:
     image: adminer
@@ -42,7 +44,7 @@ services:
     networks:
       - go-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "${APP_URL}v1/health-check"]
+      test: ["CMD", "curl", "-f", "${APP_URL}/v1/health-check"]
       interval: 40s
       timeout: 30s
       retries: 3

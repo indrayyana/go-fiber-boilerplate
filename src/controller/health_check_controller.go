@@ -11,25 +11,23 @@ type HealthCheckController struct {
 	HealthCheckService service.HealthCheckService
 }
 
-// NewHealthCheckController creates a new instance of the HealthCheckController
-func NewHealthCheckController(
-	healthCheckService service.HealthCheckService,
-) *HealthCheckController {
+func NewHealthCheckController(healthCheckService service.HealthCheckService) *HealthCheckController {
 	return &HealthCheckController{
 		HealthCheckService: healthCheckService,
 	}
 }
 
-// addServiceStatus adds the service status to the health check response list
-func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthCheck, name string, isUp bool, message *string) {
+func (h *HealthCheckController) addServiceStatus(
+	serviceList *[]response.HealthCheck, name string, isUp bool, message *string,
+) {
 	status := "Up"
 	if !isUp {
 		status = "Down"
 	}
 	*serviceList = append(*serviceList, response.HealthCheck{
-		Name:   name,
-		Status: status,
-		IsUp:   isUp,
+		Name:    name,
+		Status:  status,
+		IsUp:    isUp,
 		Message: message,
 	})
 }
@@ -44,7 +42,7 @@ func (h *HealthCheckController) addServiceStatus(serviceList *[]response.HealthC
 // @Failure 500 {object} response.HealthCheckResponse
 // @Router /health [get]
 func (h *HealthCheckController) Check(c *fiber.Ctx) error {
-	var isHealthy bool = true
+	isHealthy := true
 	var serviceList []response.HealthCheck
 
 	// Check the database connection
@@ -58,15 +56,18 @@ func (h *HealthCheckController) Check(c *fiber.Ctx) error {
 
 	// Return the response based on health check result
 	statusCode := fiber.StatusOK
+	status := "success"
+
 	if !isHealthy {
 		statusCode = fiber.StatusInternalServerError
+		status = "error"
 	}
 
 	return c.Status(statusCode).JSON(response.HealthCheckResponse{
-		Status:    "success",
-		Message:   "Health check successful",
-		Code: statusCode,
+		Status:    status,
+		Message:   "Health check completed",
+		Code:      statusCode,
 		IsHealthy: isHealthy,
-		Result: serviceList,
+		Result:    serviceList,
 	})
 }
