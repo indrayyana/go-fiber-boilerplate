@@ -53,6 +53,14 @@ func (h *HealthCheckController) Check(c *fiber.Ctx) error {
 		h.addServiceStatus(&serviceList, "Postgre", true, nil)
 	}
 
+	if err := h.HealthCheckService.MemoryHeapCheck(); err != nil {
+		isHealthy = false
+		errMsg := err.Error()
+		h.addServiceStatus(&serviceList, "Memory", false, &errMsg)
+	} else {
+		h.addServiceStatus(&serviceList, "Memory", true, nil)
+	}
+
 	// Return the response based on health check result
 	statusCode := fiber.StatusOK
 	status := "success"

@@ -2,6 +2,8 @@ package service
 
 import (
 	"app/src/utils"
+	"errors"
+	"runtime"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -9,6 +11,7 @@ import (
 
 type HealthCheckService interface {
 	GormCheck() error
+	MemoryHeapCheck() error 
 }
 
 type healthCheckService struct {
@@ -33,6 +36,25 @@ func (s *healthCheckService) GormCheck() error {
 	if err := sqlDB.Ping(); err != nil {
 		s.Log.Errorf("failed to ping the database: %v", err)
 		return err
+	}
+
+	return nil
+}
+
+// MemoryHeapCheck checks if heap memory usage exceeds a threshold
+func (s *healthCheckService) MemoryHeapCheck() error {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats) // Collect memory statistics
+
+	heapAlloc := memStats.HeapAlloc      // Heap memory currently allocated
+	heapThreshold := uint64(300 * 1024 * 1024) // Example threshold: 500 MB
+
+	s.Log.Infof("Heap Memory Allocation: %v bytes", heapAlloc)
+
+	// If the heap allocation exceeds the threshold, return an error
+	if heapAlloc > heapThreshold {
+		s.Log.Errorf("Heap memory usage exceeds threshold: %v bytes", heapAlloc)
+		return errors.New("heap memory usage too high")
 	}
 
 	return nil
