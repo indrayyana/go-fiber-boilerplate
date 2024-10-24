@@ -47,7 +47,7 @@ func (s *healthCheckService) MemoryHeapCheck() error {
 	runtime.ReadMemStats(&memStats) // Collect memory statistics
 
 	heapAlloc := memStats.HeapAlloc      // Heap memory currently allocated
-	heapThreshold := uint64(300 * 1024 * 1024) // Example threshold: 500 MB
+	heapThreshold := uint64(300 * 1024 * 1024) // Example threshold: 300 MB
 
 	s.Log.Infof("Heap Memory Allocation: %v bytes", heapAlloc)
 
