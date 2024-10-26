@@ -42,6 +42,11 @@ func TestHealthCheckRoutes(t *testing.T) {
 					Status: "Up",
 					IsUp:   true,
 				},
+				{
+					Name:   "Memory",
+					Status: "Up",
+					IsUp:   true,
+				},
 			}, responseBody.Result)
 		})
 
