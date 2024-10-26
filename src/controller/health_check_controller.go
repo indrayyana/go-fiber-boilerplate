@@ -21,9 +21,11 @@ func (h *HealthCheckController) addServiceStatus(
 	serviceList *[]response.HealthCheck, name string, isUp bool, message *string,
 ) {
 	status := "Up"
+
 	if !isUp {
 		status = "Down"
 	}
+
 	*serviceList = append(*serviceList, response.HealthCheck{
 		Name:    name,
 		Status:  status,
